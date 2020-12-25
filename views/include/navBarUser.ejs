@@ -1,0 +1,53 @@
+<div class="fixed-top" id="nav-lock"><img id="img-lock" src="/images/logo.png" alt="SFCS" width="30px"></div>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" id="nav-real">
+
+    <a class="navbar-brand" href="#"><img src="/images/logo.png" id="img-real" alt="SFCS" width="40px"></a>
+
+
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Trang chủ</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/about">Giới thiệu</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/menu">Mặt hàng</a>
+        </li>
+
+        <%if (!userType) { %>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                    Đăng nhập
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/customer">Khách hàng</a>
+                    <a class="dropdown-item" href="/employee">Nhân viên</a>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/signup">Đăng kí</a>
+            </li>
+            <% } %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/order/status">Trạng thái đơn hàng</a>
+                </li>
+
+
+    </ul>
+    <%if (userType) { %>
+
+        <nav class="form-inline dropdown dropleft float-sm-right float-right">
+            <button type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown">
+          </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="/dashboard">Dashboard</a>
+                <a class="dropdown-item" href="/info">Thông tin tài khoản</a>
+                <a class="dropdown-item" href="/logout">Đăng xuất</a>
+            </div>
+            <h3><i style="color:white;" class="fa fa-user"></i></h3>
+        </nav>
+        <% } %>
+
+</nav>

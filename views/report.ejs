@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ./include/header %>
+        <link rel='stylesheet' href='/stylesheets/sidenav.css'>
+        <script src="/javascripts/sweetalert.min.js"></script>
+        <script src="/javascripts/manager_script.js"></script>
+</head>
+
+<body>
+    <h1 style="text-align: center">Thống kê sản phẩm</h1>
+    <div class="table-containercontainer">
+        <table class="table table-bordered table-striped" style="widows:100%" border="1">
+            <tr>
+                <th>Mã sản phẩm</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+                <th>Thời gian</th>
+            </tr>
+            <%for (let i = 0; i < report.length; i++) {%>
+                <tr>
+                    <%for(let key in report[i]) {%>
+                        <td>
+                            <%=report[i][key]%>
+                        </td>
+                        <%}%>
+                </tr>
+                <%}%>
+        </table>
+    </div>
+    <button id="button" onclick="window.location.href='/vendor/download'">Lưu về máy</button>
+</body>
+
+</html>
+
+<script>
+</script>

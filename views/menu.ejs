@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ./include/header %>
+</head>
+
+<body>
+    <!-- <% include ./include/navBarUser %> -->
+    <form class="form-inline" name="search" action="javascript:void()" onsubmit="searchProduct();">
+        <div class="col-3">
+            <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" id="productName" name="searchOption" value="productName" checked>
+                <label class="custom-control-label" for="productName">Tìm theo tên</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" id="courtName" name="searchOption" value="courtName">
+                <label class="custom-control-label" for="courtName">Tìm theo màu sắc</label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" id="productType" name="searchOption" value="productType">
+                <label class="custom-control-label" for="productType">Tìm theo mẫu</label>
+            </div>
+        </div>
+        <div class="col-9">
+            <input class="form-control mr-sm-2" type="text" name="searchText" placeholder="Search">
+            <button class="btn btn-success" type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- <div class="container"> -->
+    <ul id="productList" class="row">
+        <li class="list-group-item" id="1">
+            <img src="/images/product/1.jpg" class="mx-auto d-block productImage">
+            <p class="text-center productName">CARO BAMBOOTEX BT1801</p>
+            <p class="productDescription">Mô tả: Kháng khuẩn; Chống tia UV; Mềm mướt, thoáng mát; Ít nhăn, dễ giặt ủi.</p>
+            <p class="productColor">Màu: Trắng, Xanh dương</p>
+            <p class="productType">Loại: Nhập khẩu</p>
+            <p class="productForm">Mẫu mã: 50% Bamboo, 50% Micro Fiber. Khổ vải: 1m5</p>
+            <p class="productSupplier">Nhà cung cấp: Fabric Company</p>
+            <p class="productQuantity">Có sẵn: 100</p>
+            <p class="productUnit">Đơn vị: met</p>
+            <p class="productUnitPrice">Giá: 50.000</p>
+            <p class="text-center"><button class="btn btn-primary" onclick="addproduct(this);">✔ Thêm vào giỏ hàng</button></p>
+        </li>
+    </ul>
+    <!-- </div> -->
+
+
+    <div id="cart" onclick="showCart();">
+        🛒
+    </div>
+
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div>
+                <h5>Giỏ hàng</h5>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Số lượng</th>
+                        <th>Đơn vị</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="productChosen">
+                    <tr>
+                        <td>1</td>
+                        <td>Cơm</td>
+                        <td>2</td>
+                        <td>Dĩa</td>
+                        <td>10000</td>
+                        <td>20000</td>
+                    </tr>
+
+                    <tr class="table-primary">
+                        <td>Tổng cộng</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>20000</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id='address' class='form-group'></div>
+            <div>
+                <button class="btn btn-primary" onclick="orderCart();">Đặt hàng</button>
+                <button class="btn btn-danger" onclick="deleteCart();">Xóa giỏ hàng</button>
+                <button class="btn btn-secondary" onclick="closeModal();">Hủy</button>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script>
+    var PRODUCT = {};
+    class ListItem {
+        constructor(id) {
+            this.id = id;
+            this.htmlCode = '';
+        }
+        addCode(code) {
+            this.htmlCode += '\t' + code;
+        }
+        getCode() {
+            return '<li class="list-group-item" id="' + this.id + '">\n' + this.htmlCode + '</li>';
+        }
+    }
+
+    function renderProduct(arr) {
+        let productList = $("#productList");
+        productList.empty();
+        arr.forEach(pro => {
+            PRODUCT[pro.id] = pro;
+            let li = new ListItem(pro.id);
+            li.addCode('<img src="/images/product/' + pro.id + pro.image + '" class="mx-auto d-block productImage">');
+            li.addCode('<p class="text-center productName">' + pro.name + '</p>');
+            li.addCode('<p class="productDescription">Mô tả: ' + pro.description + '</p>');
+            li.addCode('<p class="productColor">Màu: ' + pro.color + '</p>');
+            li.addCode('<p class="productType">Loại: ' + pro.type + '</p>');
+            li.addCode('<p class="productForm">Mẫu mã: ' + pro.form + '</p>');
+            li.addCode('<p class="productSupplier"> Nhà cung cấp: ' + pro.supplier + '</p>');
+            li.addCode('<p class="productQuantity">Có sẵn: ' + pro.quantity + '</p>');
+            li.addCode('<p class="productUnit">Đơn vị: ' + pro.unit + '</p>');
+            li.addCode('<p class="productUnitPrice">Đơn giá: ' + formatCurrency(pro.unitPrice, '') + ' VNĐ</p>');
+            li.addCode('<p class="text-center"><button class="btn btn-primary" onclick="addProduct(' + pro.id + ');">✔ Thêm vào giỏ hàng</button></p>')
+            productList.append(li.getCode());
+        });
+    }
+
+    function searchProduct() {
+        //Not be in used
+        if (document.search.searchOption.value && document.search.searchText.value != '') {
+            let searchOption = document.search.searchOption.value;
+            $.post("/product", {
+                    target: searchOption,
+                    value: document.search.searchText.value
+                },
+                function(arr, status) {
+                    //console.log(arr);
+                    if (status == 'success' && arr) {
+                        renderproduct(arr);
+                    }
+                });
+        }
+    }
+
+    function getAllProduct() {
+        $.post("/api/product", {
+                target: "all"
+            },
+            function(arr, status) {
+                //console.log(arr);
+                if (status == 'success' && arr) {
+                    renderProduct(arr);
+                }
+            });
+    }
+
+    function addProduct(id) {
+        let cartString = localStorage.getItem("cart");
+        let cart = {};
+        try {
+            cart = JSON.parse(cartString);
+        } catch (e) {
+            //alert('catch 1 err');
+            cart = {};
+        }
+        if (!cart) {
+            cart = {};
+        }
+        try {
+            if (!cart["" + id]) {
+                cart["" + id] = 1;
+            } else {
+                cart["" + id] -= -1;
+            }
+            localStorage.setItem("cart", JSON.stringify(cart));
+        } catch (e) {
+            //alert('catch 2 err');
+            cart = {}
+        }
+    }
+
+    function deleteCart() {
+        localStorage.removeItem("cart");
+        closeModal();
+    }
+
+    function showCart() {
+        //updateCart();
+        let cartString = localStorage.getItem("cart");
+        let cart = {};
+        try {
+            cart = JSON.parse(cartString);
+
+            if (!cart) {
+                cart = {};
+            }
+            let productChosen = $("#productChosen");
+            productChosen.empty();
+            let amount = 0;
+            let empty = true;
+            for (let id in cart)
+                if (cart[id] > 0) {
+                    empty = false;
+                    amount += PRODUCT[id].unitPrice * cart[id];
+                    productChosen.append('<tr>\
+                            <td>' + id + '</td>\
+                            <td>' + PRODUCT[id].name + '</td>\
+                            <td><input id="product' + id + '"type="number" onfocusout="updateCart();" min=0 value=' + cart[id] + '></input></td>\
+                            <td>' + PRODUCT[id].unit + '</td>\
+                            <td>' + formatCurrency(PRODUCT[id].unitPrice, '') + '</td>\
+                            <td>' + formatCurrency(PRODUCT[id].unitPrice * cart[id], '') + '</td>\
+                        </tr>');
+                }
+            if (empty) {
+                productChosen.append('<tr class="table-warning"><td>Giỏ hàng rỗng</td><td></td><td></td><td></td><td></td><td></td></tr>');
+            } else {
+                productChosen.append('<tr class="table-primary">\
+                                <td></td>\
+                                <td></td>\
+                                <td></td>\
+                                <td></td>\
+                                <td><strong>Tổng cộng</strong></td>\
+                                <td><strong>' + formatCurrency(amount, '') + '</strong></td>\
+                            </tr>');
+
+                $('#address').html(addressFormGen());
+            }
+        } catch (e) {
+            alert('catch 1 err');
+            console.log(e);
+            cart = {};
+        }
+
+        openModal();
+    }
+
+    function updateCart() {
+        let cartString = localStorage.getItem("cart");
+        let cart = {};
+        try {
+            cart = JSON.parse(cartString);
+
+            if (!cart) {
+                cart = {};
+            }
+            for (let key in cart) {
+                cart[key] = document.getElementById('product' + key).value;
+                if (cart[key] == 0) {
+                    delete cart[key];
+                }
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+        } catch (e) {
+            //alert('catch 1 err');
+            cart = {};
+        }
+
+        showCart();
+    }
+
+    function formatCurrency(n, currency) {
+        return currency + n.toString().replace(/./g, function(c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+        });
+    }
+
+    function openModal() {
+        // When the user clicks on <span> (x), close the modal
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        // When the user clicks on <span> (x), close the modal
+        modal.style.display = "none";
+    }
+
+    // Get the modal
+    var modal = document.getElementById("myModal");
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    $(document).ready(function() {
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        getAllProduct();
+    });
+
+    function orderCart() {
+        $.post("/api/order/insert", {
+                cart: localStorage.getItem('cart'),
+                address: localStorage.getItem('address'),
+                note: localStorage.getItem('note')
+            },
+            function(data, status) {
+                if (data) {
+                    alert('Bạn đã đặt hàng thành công.');
+                    localStorage.removeItem('cart');
+                    localStorage.removeItem('address');
+                    localStorage.removeItem('note');
+                    closeModal();
+                } else {
+                    location.replace('/customer/login');
+                }
+            });
+    }
+
+    function addressFormGen() {
+        address = localStorage.getItem('address');
+        note = localStorage.getItem('note');
+        let a = '',
+            b = '';
+        if (address)
+            a = '<input type="text" class="form-control" placeholder="Địa chỉ nhận hàng" name="address" onfocusout="updateAddress(this);" value="' + address + '">';
+        else a = '<input type="text" class="form-control" placeholder="Địa chỉ nhận hàng" name="address" onfocusout="updateAddress(this);">';
+        if (note)
+            b = '<input type="text" class="form-control" placeholder="Ghi chú" name="note" onfocusout="updateNote(this);" value="' + note + '">';
+        else b = '<input type="text" class="form-control" placeholder="Ghi chú" name="note" onfocusout="updateNote(this);">';
+        return a + b;
+    }
+
+    function updateAddress(ele) {
+        localStorage.setItem('address', ele.value);
+    }
+
+    function updateNote(ele) {
+        localStorage.setItem('note', ele.value);
+    }
+</script>
+
+</html>

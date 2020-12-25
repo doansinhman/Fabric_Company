@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+</head>
+
+<body>
+    <% include ../include/navBarUser %>
+        <div id="alert"></div>
+        <div class="card bg-light">
+            <article class="card-body mx-auto" style="max-width: 400px;">
+                <h4 class="card-title mt-3 text-center">Quản lí đăng nhập</h4>
+
+                <p class="divider-text">
+                    <span class="bg-light"><img src="/images/logo.png" alt="SFCS" width="80px"></span>
+                </p>
+                <form name="login" action="javascript:void()" method="POST" onsubmit="return checkInput();">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input name="user_name" class="form-control" placeholder="Tên người dùng" type="text" required>
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input name="password" class="form-control" placeholder="Mật khẩu" type="password" required>
+                    </div>
+
+                    <!-- form-group// -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block"> Đăng nhập </button>
+                    </div>
+                    <!-- form-group// -->
+                </form>
+            </article>
+        </div>
+        <!-- card.// -->
+
+        </div>
+</body>
+<script>
+    function checkInput() {
+        let password = document.login.password.value;
+        if (password.length < 5) {
+            alert('Mật khẩu phải ít nhất 5 kí tự');
+            return false;
+        }
+
+        $.post("/manager/login", {
+                user_name: document.login.user_name.value,
+                password: document.login.password.value
+            },
+            function(data, status) {
+                document.login.password.value = '';
+                //alert("Data: " + data + "\nStatus: " + status);
+                $("#alert").empty();
+                if (status != 'success') {
+                    $("#alert").append('<div class="alert alert-danger alert-dismissible">\
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>\
+                            <strong>Đăng nhập thất bại</strong>\
+                            </div>');
+                } else if (data == false) {
+                    $("#alert").append('<div class="alert alert-danger alert-dismissible">\
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>\
+                            <strong>Thông tin đăng nhập sai</strong>\
+                            </div>');
+                } else if (data == true) {
+                    window.location.replace("/manager/dashboard");
+                }
+            });
+        return true;
+    }
+</script>
+
+</html>

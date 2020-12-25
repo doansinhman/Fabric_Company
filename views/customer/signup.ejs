@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+</head>
+
+<body>
+    <% include ../include/navBarUser %>
+        <div id="alert"></div>
+        <div class="card bg-light">
+            <article class="card-body mx-auto" style="max-width: 400px;">
+                <h4 class="card-title mt-3 text-center">Đăng kí khách hàng</h4>
+                <p class="text-center">Thao tác đơn giản, hoàn toàn miễn phí</p>
+                <p class="divider-text">
+                    <span class="bg-light"><img src="/images/logo.png" alt="Fabric Company" width="80px"></span>
+                </p>
+                <form action="javascript:void()" name="signup" onsubmit="return checkInput();" method="POST">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-male"></i> </span>
+                        </div>
+                        <input name="full_name" class="form-control" placeholder="Họ và tên" type="text" required>
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="male" name="gender" value=1 checked="">
+                            <label class="custom-control-label" for="male">Nam</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="female" name="gender" value=0>
+                            <label class="custom-control-label" for="female">Nữ</label>
+                        </div>
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
+                        </div>
+                        <input name="birthday" class="form-control" placeholder="Ngày sinh" type="date" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-location-arrow"></i> </span>
+                        </div>
+                        <input name="address" class="form-control" placeholder="Địa chỉ liên lạc" type="text" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+                        </div>
+                        <input name="phone_number" class="form-control" placeholder="Điện thoại di động" type="text" required>
+                    </div>
+                    <!-- form-group// -->
+                    <!-- form-group end.// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input name="user_name" class="form-control" placeholder="Tên người dùng" type="text" required>
+                    </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input name="password" class="form-control" placeholder="Mật khẩu" type="password" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input id="repassword" class="form-control" placeholder="Xác nhận mật khẩu" type="password" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block"> Create Account </button>
+                    </div>
+                    <!-- form-group// -->
+                    <p class="text-center">Đã có tài khoản? <a href="/member">Đăng nhập</a> </p>
+                </form>
+            </article>
+        </div>
+        <!-- card.// -->
+
+        </div>
+</body>
+<script>
+    function checkInput() {
+        let full_name = document.signup.full_name.value;
+        if (!full_name.match(/^[^`!@#$%^&*()'":;,/|0-9\[\]{}]{1,}$/g)) {
+            alert('Tên bạn nhập không hợp lệ');
+            return false;
+        }
+        let phone_number = document.signup.phone_number.value;
+        if (!phone_number.match(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g)) {
+            alert('Số điện thoại không hợp lệ');
+            return false;
+        }
+        let password = document.signup.password.value;
+        if (password.length < 6) {
+            alert('Mật khẩu phải ít nhất 6 kí tự');
+            return false;
+        }
+        let repassword = document.getElementById('repassword').value;
+        if (password != repassword) {
+            alert('Xác nhận mật khẩu không khớp');
+            return false;
+        }
+
+        $.post("/signup", {
+                name: full_name,
+                gender: document.signup.gender.value,
+                birthdate: document.signup.birthday.value,
+                address: document.signup.address.value,
+                phoneNum: phone_number,
+                username: document.signup.user_name.value,
+                pw: document.signup.password.value
+            },
+            function(data, status) {
+                // alert("Data: " + data.message + '\n' + data.messageType + "\nStatus: " + status);
+                $("#alert").empty();
+                if (status != 'success') {
+                    $("#alert").append('<div class="alert alert-danger alert-dismissible">\
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>\
+                            <strong>Đăng kí thất bại</strong>\
+                            </div>');
+                } else if (data) {
+                    $("#alert").append('<div class="alert alert-' + data.messageType + ' alert-dismissible">\
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>\
+                            <strong>' + data.message + '</strong>\
+                            </div>');
+                }
+            });
+        return true;
+    }
+</script>
+
+</html>

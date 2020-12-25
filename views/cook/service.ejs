@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+</head>
+
+<body class="text-center">
+    <h1>Các món cần chuẩn bị</h1>
+    <h6>Làm mới sau: <span id='time'>30</span>s</h6>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên món</th>
+                <th>Số lượng</th>
+                <th>Đã chuẩn bị</th>
+            </tr>
+        </thead>
+        <tbody id="foodTable">
+        </tbody>
+    </table>
+</body>
+<script>
+    function updateFoodList() {
+        $.post("/service/get", {},
+            function(foodObj, status) {
+                //if (status == 'success')
+                //console.log(data);
+                let foodTable = $('#foodTable');
+                for (foodId in foodObj) {
+                    foodTable.append('<tr>\
+                                        <td>' + foodId + '</td>\
+                                        <td>' + foodObj[foodId].name + '</td>\
+                                        <td>' + foodObj[foodId].count + '</td>\
+                                        <td style="width:250px;"> \
+                                            <form class="form-inline" action="" name="formId' + foodId + '">\
+                                                <input type="number" style="width:120px;" class="form-control" id="count" placeholder="Số lượng" name="count" autocomplete="off" min="0" max="' + foodObj[foodId].count + '">\
+                                                <button type="button" class="btn btn-primary" onclick="prepared(' + foodId + ')">Gửi</button>\
+                                            </form>\
+                                        </td>\
+                                    </tr>');
+                }
+            });
+    }
+
+    function prepared(foodId) {
+        let count = document['formId' + foodId].count.value;
+        $.post("/service/put", {
+                foodId: foodId,
+                count: count
+            },
+            function(data, status) {
+                console.log('status ' + status);
+                console.log('data ' + data);
+                location.reload();
+            });
+    }
+    updateFoodList();
+
+    function countDown() {
+        let time = $('#time');
+        time.text(time.text() - 1);
+        if (time.text() == 0) {
+            $('#foodTable').empty();
+            updateFoodList();
+            time.text(30);
+        }
+    }
+    setInterval(countDown, 1000);
+</script>
+
+</html>

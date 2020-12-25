@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<style>
+    * {
+        font-family: 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        width: 300px;
+    }
+    
+    .text-center,
+    tr {
+        text-align: center;
+    }
+    
+    table,
+    th,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+    
+    h1,
+    h4,
+    h5 {
+        margin: 0;
+    }
+</style>
+
+<head>
+    <title>
+        In hóa đơn
+    </title>
+</head>
+
+<body>
+    <h1 class="text-center">SFCS</h1>
+    <h5 class="text-center">ORDER ID:
+        <%= id%>
+            </h>
+            <h5 class="text-center">Date:
+                <%= new Date(date).toLocaleString()%>
+            </h5>
+            <table style="width:100%">
+                <tr>
+                    <th>ID</th>
+                    <th>ITEM</th>
+                    <th>QTY</th>
+                    <th>UNIT PRICE</th>
+                    <th>TOTAL PRICE</th>
+                </tr>
+                <%let amount = 0;%>
+
+                    <%for (let key in cart) {%>
+                        <tr>
+                            <%amount += cart[key].price * cart[key].count;%>
+                                <td>
+                                    <%=key%>
+                                </td>
+                                <td>
+                                    <%=cart[key].name%>
+                                </td>
+                                <td>
+                                    <%=cart[key].count%>
+                                </td>
+                                <td>
+                                    <%=cart[key].price%>
+                                </td>
+                                <td>
+                                    <%=cart[key].price * cart[key].count%>
+                                </td>
+                        </tr>
+                        <%}%>
+
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>GRAND TOTAL</strong></td>
+                                <td><strong><%=amount%></strong></td>
+                            </tr>
+            </table>
+            <br>
+            <h5 class="text-center">Vui lòng giữ hóa đơn này để nhận thức ăn.<br> Xin cảm ơn!</h5>
+</body>
+
+<script>
+</script>
+
+</html>

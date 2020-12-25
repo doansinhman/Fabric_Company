@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+        <link rel='stylesheet' href='/stylesheets/sidenav.css'>
+        <script src="/javascripts/sweetalert.min.js"></script>
+        <script src="/javascripts/manager_script.js"></script>
+        <script>
+            $(document).ready(function() {
+                let navLock = $('#nav-lock');
+                let navReal = $('#nav-real');
+                let imgLock = $('#img-lock');
+                let imgReal = $('#img-real');
+                navReal.hide();
+                imgReal.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '30pt');
+                });
+                imgLock.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '50pt');
+                });
+            });
+        </script>
+</head>
+
+<body>
+    <% include ../include/navBarUser %>
+
+        <div class="sidenav">
+            <a class="nav-link" href="/manager/manage-product">Quản lí mặt hàng</a>
+            <a class="nav-link" href="/manager/manage-employee">Quản lí nhân viên</a>
+            <a class="nav-link" href="/manager/manage-customer">Quản lí khách hàng</a>
+            <a class="nav-link" href="/manager/report">Thống kê</a>
+        </div>
+        <div class="content hero-image" style="overflow: scroll;">
+            <% if (plt == 'manage-product') { %>
+                <% include ./inner_view/manage-product %>
+                    <% } %>
+                        <% if (plt == 'manage-employee') { %>
+                            <% include ./inner_view/manage-employee %>
+                                <% } %>
+                                    <% if (plt == 'report') { %>
+                                        <% include ./inner_view/report %>
+                                            <% } %>
+        </div>
+
+</body>
+
+<script>
+</script>
+
+</html>

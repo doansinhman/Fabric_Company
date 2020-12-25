@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+        <link rel='stylesheet' href='/stylesheets/sidenav.css'>
+</head>
+<script>
+    $(document).ready(function() {
+        let navLock = $('#nav-lock');
+        let navReal = $('#nav-real');
+        let imgLock = $('#img-lock');
+        let imgReal = $('#img-real');
+        navReal.hide();
+        imgReal.click(function() {
+            $(document.getElementsByClassName('sidenav')).css('padding-top', '30pt');
+        });
+        imgLock.click(function() {
+            $(document.getElementsByClassName('sidenav')).css('padding-top', '50pt');
+        });
+    });
+</script>
+
+<body>
+    <% include ../include/navBarUser %>
+        <div class="sidenav">
+            <a class="nav-link" href="/cashier/order">Kiểm tra/Xác nhận đơn hàng</a>
+        </div>
+        <div class="content hero-image">
+            <div class="hero-text">
+                <h1>
+                    Smart Food Court System
+                </h1>
+                <p>
+                    Trang dành cho Thu ngân
+                </p>
+            </div>
+        </div>
+</body>
+
+</html>

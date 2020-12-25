@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ./include/header %>
+</head>
+<script>
+    $(document).ready(function() {
+        $(".hidden").hide();
+        var submitObj = null;
+        getInfo();
+    });
+</script>>
+
+<body>
+    <% include ./include/navBarUser %>
+        <div id="alert"></div>
+        <div class="card bg-light">
+            <article class="card-body mx-auto" style="max-width: 400px;">
+                <h4 class="card-title mt-3 text-center">Thông tin cá nhân</h4>
+                <p class="text-center"></p>
+                <form action="javascript:void()" name="info" method="POST">
+                    <div class="form-group input-group hidden" id="id_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-id-card"></i> </span>
+                        </div>
+                        <input name="id" class="form-control" placeholder="ID" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="court_id_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-store"></i> </span>
+                        </div>
+                        <input name="court_id" class="form-control" placeholder="ID nhà cung cấp" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="full_name_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-male"></i> </span>
+                        </div>
+                        <input name="full_name" class="form-control" placeholder="Họ và tên" type="text" required>
+                    </div>
+                    <div class="form-group input-group hidden" id="court_name_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-store"></i> </span>
+                        </div>
+                        <input name="court_name" class="form-control" placeholder="Tên cửa hàng" type="text" required>
+                    </div>
+                    <div class="form-group input-group hidden" id="gender_ele">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="male" name="gender" value="0" checked="">
+                            <label class="custom-control-label" for="male">Nam</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" class="custom-control-input" id="female" name="gender" value="1">
+                            <label class="custom-control-label" for="female">Nữ</label>
+                        </div>
+                    </div>
+                    <div class="form-group input-group hidden" id="birthday_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
+                        </div>
+                        <input name="birthday" class="form-control" placeholder="Ngày sinh" type="date" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group hidden" id="email_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                        </div>
+                        <input name="email" class="form-control" placeholder="Địa chỉ email" type="email" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group hidden" id="phone_number_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+                        </div>
+                        <input name="phone_number" class="form-control" placeholder="Điện thoại di động" type="text" required>
+                    </div>
+                    <!-- form-group// -->
+                    <!-- form-group end.// -->
+                    <div class="form-group input-group hidden" id="user_name_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                        </div>
+                        <input name="user_name" class="form-control" placeholder="Tên người dùng" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="password_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input name="password" class="form-control" placeholder="Mật khẩu" type="password" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group hidden" id="repassword_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input id="repassword" class="form-control" placeholder="Xác nhận mật khẩu" type="password" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group">
+                        <button type="button" onclick="checkInput()" class="btn btn-primary btn-block"> Cập nhật </button>
+                    </div>
+                </form>
+                <div class="form-group">
+                    <button type="button" onclick="openModal()" class="btn btn-primary btn-block"> Đổi mật khẩu </button>
+                </div>
+            </article>
+        </div>
+        <!-- card.// -->
+
+        </div>
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <form action="javascript:void()" name="changePass" method="POST">
+                    <div class="form-group input-group" id="password_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input name="oldpw" class="form-control" placeholder="Mật khẩu cũ" type="password" required>
+                    </div>
+                    <!-- form-group// -->
+                    <div class="form-group input-group" id="repassword_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input id="newpw" class="form-control" placeholder="Mật khẩu mới" type="password" required>
+                    </div>
+                    <div class="form-group input-group" id="repassword_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                        </div>
+                        <input id="newrepw" class="form-control" placeholder="Xác nhận mật khẩu" type="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" onclick="changePw()" class="btn btn-primary btn-block"> Cập nhật </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</body>
+<script>
+    function checkInput() {
+        for (key in submitObj) {
+            if (key == 'id' || key == 'court_id' || key == 'user_name') {
+                delete submitObj[key];
+                continue;
+            }
+            submitObj[key] = document.info[key].value;
+            if (!check(key, submitObj[key]))
+                return;
+        }
+
+        $.post("/info/update", submitObj,
+            function(data, status) {
+                location.reload();
+            });
+    }
+
+    function check(key, value) {
+        switch (key) {
+            case 'full_name':
+            case 'court_name':
+                if (value.match(/[%,$,&,@]/gi) != null) {
+                    alert('Tên không được chứa ký tự đặc biệt');
+                    return false;
+                }
+                return true;
+                break;
+            case 'phone_number':
+                if (!value.match(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g)) {
+                    alert('Số điện thoại không hợp lệ');
+                    return false;
+                }
+                return true;
+                break;
+            case 'email':
+                if (!value.match(/^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm)) {
+                    alert('Email không hợp lệ.');
+                    return false;
+                }
+                return true;
+                break;
+            case 'password':
+                if (value.length < 6) {
+                    alert("Mật khẩu có ít nhất 6 kí tự.")
+                    return false;
+                }
+                return true;
+                break;
+            default:
+                return true;
+                break;
+        }
+    }
+
+    function getInfo() {
+        $.post("/info/get", {},
+            function(user, status) {
+                console.log(user);
+                submitObj = user;
+                for (key in user) {
+                    document.info[key].value = user[key];
+                    $('#' + key + '_ele').show();
+                }
+            });
+    }
+
+    function changePw() {
+        if (check('password', document.changePass.oldpw.value) && check('password', document.changePass.newpw.value)) {
+            if (document.changePass.newpw.value != document.changePass.newrepw.value) {
+                alert('Mật khẩu không khớp');
+            } else {
+                $.post("/info/updatePw", {
+                        oldpw: document.changePass.oldpw.value,
+                        newpw: document.changePass.newpw.value
+                    },
+                    function(success, status) {
+                        alert("Đổi mật khẩu " + (success ? "thành công." : "thất bại."));
+                    });
+            }
+        }
+    }
+
+    function openModal() {
+        // When the user clicks on <span> (x), close the modal
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        // When the user clicks on <span> (x), close the modal
+        modal.style.display = "none";
+    }
+
+    // Get the modal
+    var modal = document.getElementById("myModal");
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+</html>

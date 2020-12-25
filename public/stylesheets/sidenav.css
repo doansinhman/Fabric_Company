@@ -1,0 +1,71 @@
+.sidenav {
+    height: 100%; 
+    width: 180px; 
+    position: fixed; 
+    z-index: 1; 
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden; 
+    padding-top: 30px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 15px;
+    color: #818181;
+    display: block;
+    
+}
+
+.sidenav a:hover {
+    background-color: #f1f1f1;
+  }
+
+.content {
+    margin-left: 180px; /* Same as the width of the sidenav */
+    padding: 0px 10px;    
+  }
+
+#user-table {
+  width: 100%;
+  background-color: darkgrey;
+}
+
+.table-container {
+  height: 350px;
+  overflow-y: auto;
+}
+
+td , th , tr {
+  border: 1pt solid black;
+  padding: 10px;
+  text-align: center;
+}
+
+#header-row {
+  width: 100%;
+  background-color: darkgrey;
+}
+
+.btn-cp {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 5px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  
+}
+
+.radio-inline {
+  padding-left: 15pt;
+  padding-right: 15pt;
+}
+.swal2-input {
+  margin: 0.5em auto;
+  padding: .75em;
+  height: 2em;
+}

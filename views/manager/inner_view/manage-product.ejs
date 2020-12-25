@@ -1,0 +1,114 @@
+<div style='width: 100%; height: 100px;'></div>
+<table id='product-table' class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th>Màu</th>
+            <th>Ảnh</th>
+            <th>Loại</th>
+            <th>Mẫu mã</th>
+            <th>Nhà cung cấp</th>
+            <th>Số lượng tồn</th>
+            <th>Đơn vị</th>
+            <th>Đơn giá</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id='table-body'>
+
+    </tbody>
+</table>
+<div style="background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 5px">
+    <h6>Thêm mặt hàng</h6>
+    <form name="createProduct" action="/api/product/insert" method="POST" enctype="multipart/form-data" onsubmit="return checkCreateInput();">
+        <div class="form-group input-group">
+            <input name="name" class="form-control" placeholder="Tên mặt hàng" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="description" class="form-control" placeholder="Mô tả" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="color" class="form-control" placeholder="Màu sắc" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="type" class="form-control" placeholder="Loại" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="form" class="form-control" placeholder="Mẫu mã" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="supplier" class="form-control" placeholder="Nhà cung cấp" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="quantity" class="form-control" placeholder="Số lượng" type="number" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="unit" class="form-control" placeholder="Đơn vị" type="text" autocomplete="off" required>
+        </div>
+        <div class="form-group input-group">
+            <input name="unitPrice" class="form-control" placeholder="Đơn giá" type="number" autocomplete="off" required>
+        </div>
+        <label for="fileToUpload">Đính kèm ảnh</label>
+        <div class="form-group input-group">
+            <input name="fileToUpload" type="file" accept="image/*" required>
+        </div>
+        <!-- form-group// -->
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Thêm</button>
+        </div>
+    </form>
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <h6>Chỉnh sửa món</h6>
+        <form name="updateProduct" action="/api/product/update" method="POST" enctype="multipart/form-data" onsubmit="return checkUpdateInput();">
+            <input style="visibility: hidden;" name="id" type="number" required>
+            <div class="form-group input-group">
+                <input name="name" class="form-control" placeholder="Tên mặt hàng" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="description" class="form-control" placeholder="Mô tả" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="color" class="form-control" placeholder="Màu" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="type" class="form-control" placeholder="Loại" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="form" class="form-control" placeholder="Mẫu mã" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="supplier" class="form-control" placeholder="Nhà cung cấp" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="quantity" class="form-control" placeholder="Số lượng" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="unit" class="form-control" placeholder="Đơn vị" type="text" autocomplete="off" required>
+            </div>
+            <div class="form-group input-group">
+                <input name="unitPrice" class="form-control" placeholder="Đơn giá" type="text" autocomplete="off" required>
+            </div>
+            <label for="fileToUpload">Đính kèm ảnh</label>
+            <div class="form-group input-group">
+                <input name="fileToUpload" type="file" accept="image/*">
+            </div>
+            <!-- form-group// -->
+            <div><button type="submit" class="btn btn-primary">Xác nhận</button><button type="button" class="btn btn-secondary" onclick="closeModal();">Hủy</button></div>
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function() {
+        modal = document.getElementById("myModal");
+        getAllProducts();
+    });
+</script>

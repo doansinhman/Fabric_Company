@@ -1,0 +1,28 @@
+<div style='width: 100%; height: 100px;'></div>
+<div class='table-container'> 
+    <table id='user-table'>
+            <thead>
+                <tr>
+                    <th>Mã số</th>
+                    <th>Tên đầy đủ</th>
+                    <th>Tên nhà cung cấp</th>
+                    <th>Giới tính</th>
+                    <th>Sinh nhật</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Hành động</th>
+                </tr>  
+            </thead>        
+    </table>
+    <script>queryStaff('vendor');</script>
+    <script>
+        var usertable = document.getElementById('user-table');
+        var row = usertable.insertRow();
+        row.insertCell().outerHTML = 
+                        '<td>' +
+                            '<button type=\'button\' id=\'add-usr\' class=\'btn-cp\'> Add </button>'
+                        '</td>';
+        $("#add-usr").click("vendor", addStaff)
+    </script>
+</div>

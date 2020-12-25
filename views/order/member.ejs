@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+</head>
+
+<body class="text-center">
+    <h3>Hãy chọn một hình thức thanh toán</h3>
+    <div class="text-center btn" onclick="payWithMomo();">
+        <img class="payment-img" src="/images/momo.jpg">
+        <h4>Ví momo</h4>
+    </div>
+    <div id="alert"></div>
+</body>
+
+<script>
+    function getCart() {
+        let cartString = localStorage.getItem("cart");
+        let cart = {};
+        try {
+            cart = JSON.parse(cartString);
+        } catch (e) {
+            //alert('catch 1 err');
+            cart = {};
+        }
+        return cart;
+    }
+
+    function payWithMomo() {
+        alert('Tính năng này đang được phát triển.');
+    }
+</script>
+
+</html>
