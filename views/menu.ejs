@@ -303,10 +303,19 @@
     });
 
     function orderCart() {
+        let cart = localStorage.getItem('cart');
+        if (!cart || cart == '{}') {
+            return new swal('Thất bại', 'Giỏ hàng rỗng!', 'error');
+        }
+        let address = localStorage.getItem('address');
+        if (!address) {
+            return new swal('Thất bại', 'Bạn chưa nhập địa chỉ giao hàng!', 'error');
+        }
+        let note = localStorage.getItem('note');
         $.post("/api/order/insert", {
-                cart: localStorage.getItem('cart'),
-                address: localStorage.getItem('address'),
-                note: localStorage.getItem('note')
+                cart: cart,
+                address: address,
+                note: note
             },
             function(data, status) {
                 if (data) {

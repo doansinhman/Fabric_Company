@@ -4,8 +4,7 @@ var model = require('../models/model');
 var utils = require('./utils');
 
 router.get('/', function(req, res, next) {
-    console.log(req);
-    if (isManagerLoggingIn(req))
+    if (req.session.type == utils.MANAGER)
         res.redirect('/manager/dashboard');
     else {
         res.redirect('/employee/login');

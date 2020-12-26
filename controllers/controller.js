@@ -42,6 +42,7 @@ router.get('/dashboard', function(req, res, next) {
 router.use('/customer', require('./customer'));
 router.use('/employee', require('./employee'));
 router.use('/manager', require('./manager'));
+router.use('/seller', require('./seller'));
 router.use('/signup', require('./signup'));
 
 router.use('/api', require('./api/api'))

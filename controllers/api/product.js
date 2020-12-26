@@ -17,28 +17,6 @@ router.post('/', async function(req, res, next) {
                 res.json(err.sqlMessage);
             })
             break;
-        case 'court_id':
-            model.getAllProducts().then(result => {
-                res.json(result);
-            }, err => {
-                res.json(err.sqlMessage);
-            })
-            break;
-        case 'id':
-            res.json(await utils.Food.getFoodById(data.value));
-            break;
-        case 'foodName':
-            res.json(await utils.Food.getFoodsByFoodName(data.value));
-            break;
-        case 'courtName':
-            res.json(await utils.Food.getFoodsByCourtName(data.value));
-            break;
-        case 'foodType':
-            res.json(await utils.Food.getFoodsByFoodType(data.value));
-            break;
-        case 'vendor':
-            res.json(await utils.Vendor.getVendorsName());
-            break;
         default:
             break;
     }

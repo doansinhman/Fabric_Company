@@ -126,6 +126,36 @@ module.exports.insertOrderByCart = async(cart, cusId, address, note) => {
     });
 }
 
+module.exports.getAllOrders = async() => {
+    let query = "SELECT * FROM `ORDER`;";
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.confirmOrder = async(orderId, sellId) => {
+    let query = "UPDATE `ORDER` SET sellId=?, status=? WHERE id=? AND sellId IS NULL;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [sellId, 'Processing', orderId, null], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.cancelOrder = async(orderId) => {
+    let query = "UPDATE `ORDER` SET status=? WHERE id=? AND sellId IS NULL;";
+    return new Promise((resolve, reject) => {
+        con.query(query, ['Canceled', orderId], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
 module.exports.testQuery = async() => {
     let query = "INSERT INTO new_schema.customer VALUES(4, 'Khach hang F', 'HCMUT', '0123', '2002-01-13', null, null, null, null);";
     return new Promise((resolve, reject) => {

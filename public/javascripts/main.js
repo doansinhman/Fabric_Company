@@ -13,3 +13,9 @@ $(document).ready(function() {
         navReal.show();
     });
 });
+
+function timeOutReload(ms) {
+    setTimeout(function() {
+        location.reload()
+    }, ms);
+}
