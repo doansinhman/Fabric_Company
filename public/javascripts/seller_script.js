@@ -1,6 +1,8 @@
 var PRODUCT = {};
 var ORDER = {};
 var modal = null;
+var RELEASE = {};
+var PROCESSING_ID = null;
 
 function checkCreateInput() {
     return true;
@@ -15,14 +17,14 @@ function getAllOrders() {
             target: 'all'
         },
         function(data, status) {
-            console.log(data, status);
+            //console.log(data, status);
             if (status == 'success' && data) {
                 let tbody = $('#table-body');
                 data.forEach(ord => {
                     ORDER[ord.id] = ord;
                     let tr = new TableRow();
                     tr.addTableData(ord.id);
-                    tr.addTableData(new Date(ORDER[264].createDate).toDateString());
+                    tr.addTableData(new Date(ORDER[ord.id].createDate).toDateString());
                     tr.addTableData(ord.status);
                     tr.addTableData(ord.note);
                     tr.addTableData(ord.address);
@@ -30,7 +32,7 @@ function getAllOrders() {
                     tr.addTableData(ord.sellId);
                     if (ord.status != 'Pending') {
                         tr.addTableData('<button type="button" class="btn btn-outline-primary" onclick="detailOrder(' + ord.id + ');">Chi tiết</button>');
-                    } else if (ord.status == 'Pending') {
+                    } else {
                         tr.addTableData('<button type="button" class="btn btn-outline-primary" onclick="detailOrder(' + ord.id + ');">Chi tiết</button>\
                                         <button type="button" class="btn btn-outline-success" onclick="confirmOrder(' + ord.id + ');">Duyệt</button>\
                                         <button type="button" class="btn btn-outline-danger" onclick="cancelOrder(' + ord.id + ');">Huỷ</button>');
@@ -118,6 +120,72 @@ function cancelOrder(id) {
         });
 }
 
+function detailOrder(id) {
+    $.post("/api/order/", {
+            target: 'detail',
+            value: id
+        },
+        function(data, status) {
+            if (status == 'success' && data) {
+                // console.log(data);
+                $('#orderId').text(data.orderId);
+                $('#cusId').text(data.cusId);
+                $('#cusName').text(data.name);
+                $('#cusAddress').text(data.cusAddress);
+                $('#phoneNum').text(data.phoneNum);
+            }
+        });
+    $.post("/api/order/", {
+            target: 'released',
+            value: id
+        },
+        function(data, status) {
+            if (status == 'success' && data) {
+                let match = false;
+                if (PROCESSING_ID != id)
+                    RELEASE = {};
+                else
+                    match = true;
+                PROCESSING_ID = id;
+                // console.log(data);
+                tbody = $('#released-body');
+                tbody.empty();
+                data.forEach(row => {
+                    let tr = new TableRow();
+                    tr.addTableData(row.id);
+                    tr.addTableData(row.name);
+                    tr.addTableData(row.unit);
+                    tr.addTableData(row.quantity);
+                    tr.addTableData(row.ordered_quantity);
+                    tr.addTableData(row.released_quantity);
+                    tr.addTableData('<input id="product' + row.id + '" type="number" onfocusout="updateRelease(this);" value=' + (match ? RELEASE[row.id] : 0) + ' min=0 max=' + (row.ordered_quantity - row.released_quantity) + '></input>');
+                    tbody.append(tr.getHtmlCode());
+                });
+                openModal();
+            }
+        });
+}
+
+function updateRelease(ele) {
+    RELEASE[ele.id.slice(7)] = +ele.value;
+}
+
+function insertReleasement() {
+    $.post("/api/order/release", {
+            id: PROCESSING_ID,
+            release: JSON.stringify(RELEASE)
+        },
+        function(data, status) {
+            if (status == 'success' && data) {
+                new swal("Xuất bán thành công!", {
+                    icon: "success",
+                });
+                PROCESSING_ID = null;
+                RELEASE = {};
+                closeModal()
+            }
+        });
+}
 // var compatibleSwal = swal.mixin({
 //     heightAuto: false
 // })

@@ -116,7 +116,7 @@ module.exports.insertOrderByCart = async(cart, cusId, address, note) => {
             if (err) reject(err);
             let orderId = result[0].id;
             for (let productId in cart) {
-                let qry = "INSERT INTO INCLUDE VALUES(?,?,?);";
+                let qry = "CALL insertInclude(?,?,?);";
                 con.query(qry, [+orderId, +productId, +cart[productId]], function(err, result, fields) {
                     if (err) reject(err);
                 });
@@ -139,7 +139,7 @@ module.exports.getAllOrders = async() => {
 module.exports.confirmOrder = async(orderId, sellId) => {
     let query = "UPDATE `ORDER` SET sellId=?, status=? WHERE id=? AND sellId IS NULL;";
     return new Promise((resolve, reject) => {
-        con.query(query, [sellId, 'Processing', orderId, null], function(err, result, fields) {
+        con.query(query, [sellId, 'Processing', orderId], function(err, result, fields) {
             if (err) reject(err);
             resolve(result);
         });
@@ -156,8 +156,67 @@ module.exports.cancelOrder = async(orderId) => {
     });
 }
 
+module.exports.getDetailOfOrder = async(id) => {
+    let query = "CALL getDetailOfOrder(?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result[0][0]);
+        });
+    });
+}
+
+module.exports.getReleasedOfOrder = async(id) => {
+    let query = "CALL getReleasedOfOrder(?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result[0]);
+        });
+    });
+}
+
+function checkIfOrderCompleted(releasedOfOrder) {
+    for (let i = 0; i < releasedOfOrder.length; i++) {
+        if (releasedOfOrder[i].ordered_quantity > releasedOfOrder[i].released_quantity)
+            return false;
+    }
+    return true;
+}
+
+module.exports.insertReleasement = async(orderId, sellId, release) => {
+    console.log(release);
+    let query = "UPDATE `ORDER` SET sellId=?, status=? WHERE id=? AND sellId IS NULL;"
+    con.query(query, [sellId, 'Processing', orderId], function(err, result, fields) {
+        if (err) console.log(err);
+    });
+    query = "SELECT insertReleasementAndGetId(?,?) as id;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [orderId, sellId], async function(err, result, fields) {
+            if (err) console.log(err);
+
+            let rlmId = result[0].id;
+            for (let productId in release) {
+                query = "CALL insertReleaseAndAddOwe(?,?,?);";
+                console.log([+productId, rlmId, +release[productId]]);
+                con.query(query, [+productId, rlmId, +release[productId]], function(err, result, fields) {
+                    if (err) reject(err);
+                });
+            }
+
+            if (checkIfOrderCompleted(await module.exports.getReleasedOfOrder(orderId))) {
+                query = "UPDATE `ORDER` SET status=? WHERE id=?;";
+                con.query(query, ['Completed', orderId], async function(err, result, fields) {
+                    if (err) console.log(err);
+                });
+            }
+            resolve(true);
+        });
+    });
+}
+
 module.exports.testQuery = async() => {
-    let query = "INSERT INTO new_schema.customer VALUES(4, 'Khach hang F', 'HCMUT', '0123', '2002-01-13', null, null, null, null);";
+    let query = "CALL getReleasedOfOrder(269);";
     return new Promise((resolve, reject) => {
         con.query(query, function(err, result, fields) {
             if (err) reject(err);
@@ -167,14 +226,15 @@ module.exports.testQuery = async() => {
 }
 async function main() {
     try {
-        let ret = await module.exports.testQuery();
+        let ret = await module.exports.getReleasedOfOrder(269);
+        console.log(ret);
     } catch (err) {
-        //console.log(err);
+        console.log(err);
     }
 
     //con.end();
 }
-//main();
+// main();
 
 
 

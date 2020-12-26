@@ -3,56 +3,6 @@
 /**
  * Module dependencies.
  */
-
-//RUN 1 TIME
-/*
-var model = require('../models/model');
-model.createCook({ court_id: 1, user_name: 'cook01', password: '123456' });
-
-model.createVendor({
-    id: 1,
-    full_name: "Nguyễn Luân",
-    court_name: "Luân's Court",
-    gender: 'male',
-    birthday: '2000-06-01',
-    email: 'luanml@gmail.com',
-    phone_number: '0123456789',
-    user_name: 'luan.nguyen',
-    password: '654321'
-});
-*/
-// var model = require('../models/model');
-// model.createManager({
-//     user_name: 'admin',
-//     password: 'admin'
-// });
-
-/*var model = require('../models/model');
-model.createScreen({
-    user_name: 'screen1',
-    password: '123456'
-});
-*/
-/*var model = require('../models/model');
-model.createCashier({
-    user_name: 'cashier1',
-    password: '123456'
-});*/
-// var model = require('../models/model');
-// for (let index = 0; index < 10; index++) {
-//     var uname = "long" + index;
-//     model.createVendor(
-//         {
-//             user_name: uname,
-//             court_name: 'ahihi'+index,
-//             password: 'aaaaaa'+index,
-//             full_name: uname,
-//             birthday: "0-0-0", 
-//             password: "xnxx.com"
-//         }
-//     )
-// }
-
 var app = require('../app');
 var debug = require('debug')('sfcs:server');
 var http = require('http');

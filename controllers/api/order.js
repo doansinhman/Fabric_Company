@@ -6,6 +6,8 @@ var utils = require('../utils');
 var formidable = require('formidable');
 var mv = require('mv');
 var fs = require('fs');
+const { json } = require('body-parser');
+const { cpuUsage } = require('process');
 
 router.post('/', async function(req, res, next) {
     let data = req.body;
@@ -15,10 +17,32 @@ router.post('/', async function(req, res, next) {
                 res.json(result);
             }, err => {
                 res.json(err.sqlMessage);
-            })
+            });
             break;
         case 'cusId':
             break;
+        case 'detail':
+            if (req.session.type == utils.SELLER) {
+                model.getDetailOfOrder(data.value).then(result => {
+                    res.json(result);
+                }, err => {
+                    res.json(err.sqlMessage);
+                });
+            } else {
+                res.json(false);
+            }
+            break
+        case 'released':
+            if (req.session.type == utils.SELLER) {
+                model.getReleasedOfOrder(data.value).then(result => {
+                    res.json(result);
+                }, err => {
+                    res.json(err.sqlMessage);
+                });
+            } else {
+                res.json(false);
+            }
+            break
         default:
             break;
     }
@@ -37,6 +61,7 @@ router.post('/insert', async function(req, res, next) {
             res.json(true);
         }, err => {
             console.log(err);
+            res.json(err.sqlMessage);
         });
     } else {
         res.json(false);
@@ -68,6 +93,21 @@ router.post('/cancel', async function(req, res, next) {
         res.json(false);
     }
 });
+
+router.post('/release', async function(req, res, next) {
+    console.log(req.body.release);
+    if (req.session.type == utils.SELLER) {
+        model.insertReleasement(req.body.id, req.session.user.id, JSON.parse(req.body.release)).then(result => {
+            res.json(true);
+        }, err => {
+            console.log(err);
+            res.json(false)
+        });
+    } else {
+        res.json(false);
+    }
+});
+
 
 
 module.exports = router;
