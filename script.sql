@@ -404,7 +404,7 @@ BEGIN
     SET NEW.id = @newId;
 END;//
 
-DROP TRIGGER TR_customer_beforeinsert;
+DROP TRIGGER IF EXISTS TR_customer_beforeinsert;
 delimiter //
 CREATE TRIGGER TR_customer_beforeinsert BEFORE INSERT ON CUSTOMER
 FOR EACH ROW
@@ -429,7 +429,7 @@ BEGIN
     END IF;
 END;//
 
-DROP TRIGGER TR_customer_beforeupdate;
+DROP TRIGGER IF EXISTS TR_customer_beforeupdate;
 delimiter //
 CREATE TRIGGER TR_customer_beforeupdate BEFORE INSERT ON CUSTOMER
 FOR EACH ROW
