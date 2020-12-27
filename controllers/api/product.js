@@ -15,7 +15,34 @@ router.post('/', async function(req, res, next) {
                 res.json(result);
             }, err => {
                 res.json(err.sqlMessage);
-            })
+            });
+            break;
+        case 'productName':
+            model.getProductsByName(req.body.value).then(result => {
+                res.json(result);
+            }, err => {
+                res.json(err.sqlMessage);
+            });
+            break;
+        case 'productColor':
+            model.getProductsByColor(req.body.value).then(result => {
+                res.json(result);
+            }, err => {
+                res.json(err.sqlMessage);
+            });
+            break;
+        case 'productForm':
+            model.getProductsByForm(req.body.value).then(result => {
+                res.json(result);
+            }, err => {
+                res.json(err.sqlMessage);
+            });
+        case 'productType':
+            model.getProductsByType(req.body.value).then(result => {
+                res.json(result);
+            }, err => {
+                res.json(err.sqlMessage);
+            });
             break;
         default:
             break;

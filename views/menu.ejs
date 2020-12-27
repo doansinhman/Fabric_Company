@@ -17,12 +17,12 @@
                 <label class="custom-control-label" for="productName">Tìm theo tên</label>
             </div>
             <div class="custom-control custom-radio">
-                <input type="radio" class="custom-control-input" id="courtName" name="searchOption" value="courtName">
-                <label class="custom-control-label" for="courtName">Tìm theo màu sắc</label>
+                <input type="radio" class="custom-control-input" id="productColor" name="searchOption" value="productColor">
+                <label class="custom-control-label" for="productColor">Tìm theo màu sắc</label>
             </div>
             <div class="custom-control custom-radio">
                 <input type="radio" class="custom-control-input" id="productType" name="searchOption" value="productType">
-                <label class="custom-control-label" for="productType">Tìm theo mẫu</label>
+                <label class="custom-control-label" for="productType">Tìm theo loại</label>
             </div>
         </div>
         <div class="col-9">
@@ -142,14 +142,14 @@
         //Not be in used
         if (document.search.searchOption.value && document.search.searchText.value != '') {
             let searchOption = document.search.searchOption.value;
-            $.post("/product", {
+            $.post("/api/product", {
                     target: searchOption,
                     value: document.search.searchText.value
                 },
                 function(arr, status) {
                     //console.log(arr);
                     if (status == 'success' && arr) {
-                        renderproduct(arr);
+                        renderProduct(arr);
                     }
                 });
         }

@@ -24,7 +24,7 @@ function getAllOrders() {
                     ORDER[ord.id] = ord;
                     let tr = new TableRow();
                     tr.addTableData(ord.id);
-                    tr.addTableData(new Date(ORDER[ord.id].createDate).toDateString());
+                    tr.addTableData(new Date(ORDER[ord.id].createDate).toLocaleString());
                     tr.addTableData(ord.status);
                     tr.addTableData(ord.note);
                     tr.addTableData(ord.address);
@@ -158,7 +158,7 @@ function detailOrder(id) {
                     tr.addTableData(row.quantity);
                     tr.addTableData(row.ordered_quantity);
                     tr.addTableData(row.released_quantity);
-                    if (['Canceled', 'Completed'].includes(ORDER[id].status))
+                    if (row.released_quantity >= row.ordered_quantity)
                         tr.addTableData('❌');
                     else
                         tr.addTableData('<input id="product' + row.id + '" type="number" onfocusout="updateRelease(this);" value=' + (match ? RELEASE[row.id] : 0) + ' min=0 max=' + (row.ordered_quantity - row.released_quantity) + '></input>');

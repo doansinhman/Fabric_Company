@@ -11,6 +11,17 @@ con.connect(function(err) {
     if (err) throw err;
 });
 
+module.exports.initSession = async() => {
+    let query = "CALL initSession();"
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            console.log('Initialized session.')
+            resolve(result);
+        })
+    });
+}
+
 module.exports.getCustomerById = async(id) => {
     let query = "SELECT * FROM CUSTOMER WHERE id=" + id;
     return new Promise((resolve, reject) => {
@@ -99,6 +110,46 @@ module.exports.getAllProducts = async() => {
     console.log(query);
     return new Promise((resolve, reject) => {
         con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getProductsByName = async(name) => {
+    let query = "SELECT * FROM PRODUCT WHERE REGEXP_LIKE(name, ?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [name], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getProductsByColor = async(color) => {
+    let query = "SELECT * FROM PRODUCT WHERE REGEXP_LIKE(color, ?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [color], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getProductsByForm = async(form) => {
+    let query = "SELECT * FROM PRODUCT WHERE REGEXP_LIKE(form, ?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [form], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getProductsByType = async(type) => {
+    let query = "SELECT * FROM PRODUCT WHERE REGEXP_LIKE(type, ?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [type], function(err, result, fields) {
             if (err) reject(err);
             resolve(result);
         });
@@ -245,12 +296,12 @@ module.exports.insertReleasement = async(orderId, sellId, release) => {
                 });
             }
 
-            if (checkIfOrderCompleted(await module.exports.getReleasedOfOrder(orderId))) {
-                query = "UPDATE `ORDER` SET status=? WHERE id=?;";
-                con.query(query, ['Completed', orderId], async function(err, result, fields) {
-                    if (err) console.log(err);
-                });
-            }
+            // if (checkIfOrderCompleted(await module.exports.getReleasedOfOrder(orderId))) {
+            //     query = "UPDATE `ORDER` SET status=? WHERE id=?;";
+            //     con.query(query, ['Completed', orderId], async function(err, result, fields) {
+            //         if (err) console.log(err);
+            //     });
+            // }
             resolve(true);
         });
     });
@@ -265,6 +316,9 @@ module.exports.testQuery = async() => {
         });
     });
 }
+
+module.exports.initSession();
+
 async function main() {
     try {
         let ret = await module.exports.getReleasedOfOrder(269);
