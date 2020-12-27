@@ -318,14 +318,16 @@
                 note: note
             },
             function(data, status) {
-                if (data) {
-                    alert('Bạn đã đặt hàng thành công.');
+                if (data == true) {
+                    new swal('Thành công', 'Đơn hàng của bạn đang chờ duyệt!', 'success');
                     localStorage.removeItem('cart');
                     localStorage.removeItem('address');
                     localStorage.removeItem('note');
                     closeModal();
-                } else {
+                } else if (data == false) {
                     location.replace('/customer/login');
+                } else {
+                    new swal('Thất bại', data, 'error');
                 }
             });
     }

@@ -21,6 +21,47 @@ module.exports.getCustomerById = async(id) => {
     });
 }
 
+module.exports.updateCustomer = async(id, cus) => {
+    let query = "UPDATE CUSTOMER SET name=?, gender=?, address=?, phoneNum=?, birthdate=? WHERE id=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [cus.name, cus.gender, cus.address, cus.phoneNum, cus.birthdate, id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.updateCustomerPw = async(id, raw) => {
+    let query = "UPDATE CUSTOMER SET pw=? WHERE id=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [utils.hashPw(raw), id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+
+module.exports.updateEmployeePw = async(id, raw) => {
+    let query = "UPDATE EMPLOYEE SET pw=? WHERE id=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [utils.hashPw(raw), id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.updateEmployee = async(id, emp) => {
+    let query = "UPDATE EMPLOYEE SET name=?, gender=?, address=?, phoneNum=?, birthdate=? WHERE id=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [emp.name, emp.gender, emp.address, emp.phoneNum, emp.birthdate, id], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
 module.exports.getCustomerByUsername = async(username) => {
     let query = "SELECT * FROM CUSTOMER WHERE username='" + username + "';";
     console.log(query);

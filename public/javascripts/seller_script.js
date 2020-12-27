@@ -158,7 +158,10 @@ function detailOrder(id) {
                     tr.addTableData(row.quantity);
                     tr.addTableData(row.ordered_quantity);
                     tr.addTableData(row.released_quantity);
-                    tr.addTableData('<input id="product' + row.id + '" type="number" onfocusout="updateRelease(this);" value=' + (match ? RELEASE[row.id] : 0) + ' min=0 max=' + (row.ordered_quantity - row.released_quantity) + '></input>');
+                    if (['Canceled', 'Completed'].includes(ORDER[id].status))
+                        tr.addTableData('❌');
+                    else
+                        tr.addTableData('<input id="product' + row.id + '" type="number" onfocusout="updateRelease(this);" value=' + (match ? RELEASE[row.id] : 0) + ' min=0 max=' + (row.ordered_quantity - row.released_quantity) + '></input>');
                     tbody.append(tr.getHtmlCode());
                 });
                 openModal();

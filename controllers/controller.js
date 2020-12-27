@@ -39,6 +39,18 @@ router.get('/dashboard', function(req, res, next) {
     }
 });
 
+router.get('/info', function(req, res, next) {
+    if (req.session.type) {
+        res.render('info', {
+            title: 'Thông tin tài khoản',
+            userType: req.session.type
+        });
+    } else {
+        res.writeHead(404);
+        res.end('Login first.');
+    }
+});
+
 router.use('/customer', require('./customer'));
 router.use('/employee', require('./employee'));
 router.use('/manager', require('./manager'));

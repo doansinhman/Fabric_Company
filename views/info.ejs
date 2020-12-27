@@ -27,78 +27,88 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-id-card"></i> </span>
                         </div>
-                        <input name="id" class="form-control" placeholder="ID" type="text" required disabled>
+                        <input name="id" title="ID" class="form-control" placeholder="ID" type="text" required disabled>
                     </div>
-                    <div class="form-group input-group hidden" id="court_id_ele">
+                    <!-- <div class="form-group input-group hidden" id="court_id_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-store"></i> </span>
                         </div>
                         <input name="court_id" class="form-control" placeholder="ID nhà cung cấp" type="text" required disabled>
-                    </div>
-                    <div class="form-group input-group hidden" id="full_name_ele">
+                    </div> -->
+                    <div class="form-group input-group hidden" id="name_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-male"></i> </span>
                         </div>
-                        <input name="full_name" class="form-control" placeholder="Họ và tên" type="text" required>
+                        <input name="name" title="Họ và tên" class="form-control" placeholder="Họ và tên" type="text" required>
                     </div>
-                    <div class="form-group input-group hidden" id="court_name_ele">
+                    <div class="form-group input-group hidden" id="groupName_ele">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-store"></i> </span>
+                            <span class="input-group-text"> <i class="fa fa-users"></i> </span>
                         </div>
-                        <input name="court_name" class="form-control" placeholder="Tên cửa hàng" type="text" required>
+                        <input name="groupName" title="Tên nhóm" class="form-control" placeholder="Tên nhóm" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="address_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-location-arrow"></i> </span>
+                        </div>
+                        <input name="address" title="Địa chỉ" class="form-control" placeholder="Địa chỉ" type="text" required>
                     </div>
                     <div class="form-group input-group hidden" id="gender_ele">
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="male" name="gender" value="0" checked="">
+                            <input type="radio" class="custom-control-input" id="male" name="gender" value="1" checked="">
                             <label class="custom-control-label" for="male">Nam</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="female" name="gender" value="1">
+                            <input type="radio" class="custom-control-input" id="female" name="gender" value="0">
                             <label class="custom-control-label" for="female">Nữ</label>
                         </div>
                     </div>
-                    <div class="form-group input-group hidden" id="birthday_ele">
+                    <div class="form-group input-group hidden" id="birthdate_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-calendar"></i> </span>
                         </div>
-                        <input name="birthday" class="form-control" placeholder="Ngày sinh" type="date" required>
+                        <input name="birthdate" title="Ngày sinh" class="form-control" placeholder="Ngày sinh" type="date" required>
                     </div>
                     <!-- form-group// -->
-                    <div class="form-group input-group hidden" id="email_ele">
+                    <!-- <div class="form-group input-group hidden" id="email_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
                         </div>
                         <input name="email" class="form-control" placeholder="Địa chỉ email" type="email" required>
-                    </div>
+                    </div> -->
                     <!-- form-group// -->
-                    <div class="form-group input-group hidden" id="phone_number_ele">
+                    <div class="form-group input-group hidden" id="phoneNum_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
                         </div>
-                        <input name="phone_number" class="form-control" placeholder="Điện thoại di động" type="text" required>
+                        <input name="phoneNum" title="Địa thoại liên lạc" class="form-control" placeholder="Điện thoại liên lạc" type="text" required>
+                    </div>
+                    <div class="form-group input-group hidden" id="owe_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-minus-circle"></i> </span>
+                        </div>
+                        <input name="owe" title="Công nợ" class="form-control" placeholder="Công nợ" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="salary_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-credit-card"></i> </span>
+                        </div>
+                        <input name="salary" title="Lương" class="form-control" placeholder="Lương" type="text" required disabled>
+                    </div>
+                    <div class="form-group input-group hidden" id="type_ele">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-sitemap"></i> </span>
+                        </div>
+                        <input name="type" title="Chức vụ" class="form-control" placeholder="Chức vụ" type="text" required disabled>
                     </div>
                     <!-- form-group// -->
                     <!-- form-group end.// -->
-                    <div class="form-group input-group hidden" id="user_name_ele">
+                    <div class="form-group input-group hidden" id="username_ele">
                         <div class="input-group-prepend">
                             <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                         </div>
-                        <input name="user_name" class="form-control" placeholder="Tên người dùng" type="text" required disabled>
+                        <input name="username" title="Tên người dùng" class="form-control" placeholder="Tên người dùng" type="text" required disabled>
                     </div>
-                    <div class="form-group input-group hidden" id="password_ele">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                        </div>
-                        <input name="password" class="form-control" placeholder="Mật khẩu" type="password" required>
-                    </div>
-                    <!-- form-group// -->
-                    <div class="form-group input-group hidden" id="repassword_ele">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                        </div>
-                        <input id="repassword" class="form-control" placeholder="Xác nhận mật khẩu" type="password" required>
-                    </div>
-                    <!-- form-group// -->
                     <div class="form-group">
                         <button type="button" onclick="checkInput()" class="btn btn-primary btn-block"> Cập nhật </button>
                     </div>
@@ -144,9 +154,11 @@
         </div>
 </body>
 <script>
+    submitObj = {};
+
     function checkInput() {
         for (key in submitObj) {
-            if (key == 'id' || key == 'court_id' || key == 'user_name') {
+            if (['id', 'groupName', 'salary', 'owe', 'username', 'type'].includes(key)) {
                 delete submitObj[key];
                 continue;
             }
@@ -154,40 +166,43 @@
             if (!check(key, submitObj[key]))
                 return;
         }
-
-        $.post("/info/update", submitObj,
+        console.log(submitObj);
+        $.post("/api/info/update", submitObj,
             function(data, status) {
-                location.reload();
+                if (status == 'success') {
+                    if (data == true) {
+                        new swal('Thành công', 'Thông tin đã được cập nhật.', 'success');
+                        timeOutReload(1000);
+                    } else if (data == false) {
+                        new swal('Thất bại', '', 'error');
+                    } else {
+                        new swal('Thất bại', data, 'error');
+                    }
+                } else {
+                    new swal('Thất bại', 'Cập nhật thông tin thất bại.', 'error');
+                }
             });
     }
 
     function check(key, value) {
         switch (key) {
-            case 'full_name':
-            case 'court_name':
-                if (value.match(/[%,$,&,@]/gi) != null) {
-                    alert('Tên không được chứa ký tự đặc biệt');
+            case 'name':
+                if (!value.match(/^[^`!@#$%^&*()\'":;,/|0-9\[\]{}]{1,}$/g)) {
+                    new swal('Thất bại', 'Tên không được rỗng và không chứa kí tự đặc biệt.', 'error');
                     return false;
                 }
                 return true;
                 break;
-            case 'phone_number':
+            case 'phoneNum':
                 if (!value.match(/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g)) {
-                    alert('Số điện thoại không hợp lệ');
-                    return false;
-                }
-                return true;
-                break;
-            case 'email':
-                if (!value.match(/^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm)) {
-                    alert('Email không hợp lệ.');
+                    new swal('Thất bại', 'Số điện thoại không hợp lệ.', 'error');
                     return false;
                 }
                 return true;
                 break;
             case 'password':
                 if (value.length < 6) {
-                    alert("Mật khẩu có ít nhất 6 kí tự.")
+                    new swal('Thất bại', 'Mật khẩu chứa ít nhất 6 kí tự.', 'error');
                     return false;
                 }
                 return true;
@@ -199,12 +214,23 @@
     }
 
     function getInfo() {
-        $.post("/info/get", {},
+        $.post("/api/info/get", {},
             function(user, status) {
-                console.log(user);
                 submitObj = user;
                 for (key in user) {
-                    document.info[key].value = user[key];
+                    if (key == 'birthdate') {
+                        let d = new Date(user[key]);
+                        let yy = d.getFullYear();
+                        let mm = d.getMonth() + 1;
+                        if (mm < 10)
+                            mm = '0' + mm;
+                        let dd = d.getDate();
+                        if (dd < 10)
+                            dd = '0' + dd;
+                        document.info[key].value = yy + '-' + mm + '-' + dd;
+                    } else {
+                        document.info[key].value = user[key];
+                    }
                     $('#' + key + '_ele').show();
                 }
             });
@@ -213,14 +239,28 @@
     function changePw() {
         if (check('password', document.changePass.oldpw.value) && check('password', document.changePass.newpw.value)) {
             if (document.changePass.newpw.value != document.changePass.newrepw.value) {
-                alert('Mật khẩu không khớp');
+                swal('Thất bại', 'Xác nhận mật khẩu không khớp.', 'error');
             } else {
-                $.post("/info/updatePw", {
+                $.post("api/info/updatePw", {
                         oldpw: document.changePass.oldpw.value,
                         newpw: document.changePass.newpw.value
                     },
-                    function(success, status) {
-                        alert("Đổi mật khẩu " + (success ? "thành công." : "thất bại."));
+                    function(msg, status) {
+                        if (status == 'success') {
+                            if (msg == true) {
+                                new swal('Thành công', 'Mật khẩu đã được thay đổi.', 'success');
+                                document.changePass.oldpw.value = '';
+                                document.changePass.newpw.value = '';
+                                document.changePass.newrepw.value = '';
+                                closeModal()
+                            } else if (msg == false) {
+                                new swal('Thất bại', '', 'error');
+                            } else {
+                                new swal('Thất bại', msg, 'error');
+                            }
+                        } else {
+                            new swal('Thất bại', 'Thay đổi mật khẩu thất bại.', 'error');
+                        }
                     });
             }
         }
