@@ -41,7 +41,15 @@ router.post('/login', async function(req, res, next) {
 
 router.get('/dashboard/', function(req, res, next) {
     if (req.session.type == utils.CUSTOMER) {
-        res.render('./customer/dashboard', { title: "Khách hàng", userType: req.session.type })
+        res.render('./customer/dashboard', { title: "Khách hàng", plt: "none", userType: req.session.type })
+    } else {
+        res.redirect('/customer/login');
+    }
+});
+
+router.get('/manage-order/', function(req, res, next) {
+    if (req.session.type == utils.CUSTOMER) {
+        res.render('./customer/dashboard', { title: "Khách hàng", plt: "manage-order", userType: req.session.type })
     } else {
         res.redirect('/customer/login');
     }

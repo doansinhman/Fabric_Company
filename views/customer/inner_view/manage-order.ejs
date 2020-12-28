@@ -1,0 +1,80 @@
+<div style='width: 100%; height: 100px;'></div>
+<table id='product-table' class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+            <th>Ghi chú</th>
+            <th>Địa chỉ nhận</th>
+            <th>Id khách hàng</th>
+            <th>Id người duyệt</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id='table-body'>
+
+    </tbody>
+</table>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <h6>Chi tiết đơn hàng</h6>
+        <div class="container">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span>ID đơn hàng: </span>
+                    <span id="orderId"></span>
+                </li>
+                <li class="list-group-item">
+                    <span>ID khách hàng: </span>
+                    <span id="cusId"></span>
+                </li>
+                <li class="list-group-item">
+                    <span>Tên khách hàng: </span>
+                    <span id="cusName"></span>
+                </li>
+                <li class="list-group-item">
+                    <span>Địa chỉ khách hàng: </span>
+                    <span id="cusAddress"></span>
+                </li>
+                <li class="list-group-item">
+                    <span>Số điện thoại liên lạc: </span>
+                    <span id="phoneNum"></span>
+                </li>
+            </ul>
+        </div>
+        <table id='release-table' class="table table-light">
+            <thead>
+                <tr>
+                    <th>ID mặt hàng</th>
+                    <th>Tên mặt hàng</th>
+                    <th>Đơn vị</th>
+                    <th>Đã đặt</th>
+                    <th>Đã xuất</th>
+                    <th>Đã giao</th>
+                </tr>
+            </thead>
+            <tbody id='released-body'>
+
+            </tbody>
+        </table>
+        <form class="form-inline">
+            <span class="col-3"></span>
+            <button type="button" class="col-2 btn btn-primary" onclick="insertReleasement();">Xuất bán</button>
+            <span class="col-2"></span>
+            <button type="button" class="col-2 btn btn-secondary" onclick="closeModal();">Thoát</button>
+            <span class="col-3"></span>
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function() {
+        modal = document.getElementById("myModal");
+        getAllOrders();
+    });
+</script>

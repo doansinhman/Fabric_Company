@@ -1,9 +1,10 @@
+DROP PROCEDURE initSession;
 delimiter //
 CREATE PROCEDURE initSession()
 BEGIN
-	SET @nameRegex = '^[^`!@#$%^&*()\'":;,/|0-9\[\]{}]{1,}$';
+	SET @nameRegex = '^[^`!@#$%^&*()\'":;,/|0-9\\]\\[]{1,}$';
 	SET @phoneNumRegex = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
-	SET @usernameRegex = @usernameRegex;
+	SET @usernameRegex = '^[a-zA-Z0-9_.]{6,}$';
 
 	SET @nameMessage = 'Name is invalid.';
 	SET @phoneNumMessage = 'Phone number invalid.';
@@ -603,13 +604,31 @@ CREATE PROCEDURE getReleasedOfOrder (
     _orderId		INT
 )
 BEGIN
-	SELECT P.id, P.name, P.quantity, P.unit, I.quantity ordered_quantity, IFNULL(SUM(RL.quantity), 0) AS released_quantity
-	FROM PRODUCT as P INNER JOIN `INCLUDE` as I ON P.id = I.productId
-	INNER JOIN `ORDER` AS O ON O.id = I.orderId
-	LEFT OUTER JOIN RELEASEMENT as RLM ON RLM.orderId = O.id
-	LEFT OUTER JOIN `RELEASE` as RL ON RL.releaseId = RLM.id AND P.id=RL.productId
-    WHERE O.id = _orderId
-	GROUP BY P.id;
+-- 	SELECT P.id, P.name, P.quantity, P.unit, I.quantity ordered_quantity, IFNULL(SUM(RL.quantity), 0) AS released_quantity
+-- 	FROM PRODUCT as P INNER JOIN `INCLUDE` as I ON P.id = I.productId
+-- 	INNER JOIN `ORDER` AS O ON O.id = I.orderId
+-- 	LEFT OUTER JOIN RELEASEMENT as RLM ON RLM.orderId = O.id
+-- 	LEFT OUTER JOIN `RELEASE` as RL ON RL.releaseId = RLM.id AND P.id=RL.productId
+--     WHERE O.id = _orderId
+-- 	GROUP BY P.id;
+    SELECT TB1.id, TB1.name, TB1.quantity, TB1.unit, TB1.ordered_quantity, TB1.released_quantity, IFNULL(TB2.shipped_quantity, 0) AS shipped_quantity FROM
+	(
+		SELECT P.id, P.name, P.quantity, P.unit, I.quantity AS ordered_quantity, IFNULL(SUM(RL.quantity), 0) AS released_quantity
+		FROM PRODUCT as P INNER JOIN `INCLUDE` as I ON P.id = I.productId
+		INNER JOIN `ORDER` AS O ON O.id = I.orderId
+		LEFT OUTER JOIN RELEASEMENT as RLM ON RLM.orderId = O.id
+		LEFT OUTER JOIN `RELEASE` as RL ON RL.releaseId = RLM.id AND P.id=RL.productId
+		WHERE O.id=_orderId
+		GROUP BY P.id
+    ) AS TB1
+    LEFT OUTER JOIN
+    (
+		SELECT S.productId AS id, SUM(S.quantity) AS shipped_quantity
+		FROM SHIP AS S INNER JOIN SHIPMENT AS SM ON S.shipmentId = SM.id
+		WHERE S.orderId=_orderId AND SM.status='Completed'
+		GROUP BY S.productId
+	) AS TB2
+    ON TB1.id = TB2.id;
 END;//
 
 DROP FUNCTION IF EXISTS insertReleasementAndGetId;

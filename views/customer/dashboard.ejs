@@ -6,42 +6,40 @@
         <%= title %>
     </title>
     <% include ../include/header %>
-        <!--<link rel='stylesheet' href='/stylesheets/sidenav.css'>-->
-</head>
-<script>
-    /*$(document).ready(function() {
-                    let navLock = $('#nav-lock');
-                    let navReal = $('#nav-real');
-                    let imgLock = $('#img-lock');
-                    let imgReal = $('#img-real');
-                    navReal.hide();
-                    imgReal.click(function() {
-                        $(document.getElementsByClassName('sidenav')).css('padding-top', '30pt');
-                    });
-                    imgLock.click(function() {
-                        $(document.getElementsByClassName('sidenav')).css('padding-top', '50pt');
-                    });
+        <link rel='stylesheet' href='/stylesheets/sidenav.css'>
+        <script src="/javascripts/customer_script.js"></script>
+        <script>
+            $(document).ready(function() {
+                let navLock = $('#nav-lock');
+                let navReal = $('#nav-real');
+                let imgLock = $('#img-lock');
+                let imgReal = $('#img-real');
+                navReal.hide();
+                imgReal.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '30pt');
                 });
-                */
-</script>
+                imgLock.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '50pt');
+                });
+            });
+        </script>
+</head>
 
 <body>
     <% include ../include/navBarUser %>
-        <!--<div class="sidenav">
-            <a class="nav-link" href="#">...</a>
-            <a class="nav-link" href="#">...</a>
+
+        <div class="sidenav">
+            <a class="nav-link" href="/customer/manage-order">Xem trạng thái đơn hàng</a>
         </div>
-    -->
-        <div class="content hero-image">
-            <div class="hero-text">
-                <h1>
-                    Fabric Company
-                </h1>
-                <p>
-                    Trang dành cho Khách hàng
-                </p>
-            </div>
+        <div class="content hero-image" style="overflow: scroll;">
+            <% if (plt == 'manage-order') { %>
+                <% include ./inner_view/manage-order %>
+                    <% } %>
         </div>
+
 </body>
+
+<script>
+</script>
 
 </html>

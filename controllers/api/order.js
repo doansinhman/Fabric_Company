@@ -13,16 +13,29 @@ router.post('/', async function(req, res, next) {
     let data = req.body;
     switch (data.target) {
         case 'all':
-            model.getAllOrders().then(result => {
-                res.json(result);
-            }, err => {
-                res.json(err.sqlMessage);
-            });
+            if (req.session.type == utils.SELLER) {
+                model.getAllOrders().then(result => {
+                    res.json(result);
+                }, err => {
+                    res.json(err.sqlMessage);
+                });
+            } else {
+                res.json(false);
+            }
             break;
         case 'cusId':
+            if (req.session.type == utils.CUSTOMER) {
+                model.getAllOrdersOfCustomer(req.session.user.id).then(result => {
+                    res.json(result);
+                }, err => {
+                    res.json(err.sqlMessage);
+                });
+            } else {
+                res.json(false);
+            }
             break;
         case 'detail':
-            if (req.session.type == utils.SELLER) {
+            if (req.session.type == utils.SELLER || req.session.type == utils.CUSTOMER) {
                 model.getDetailOfOrder(data.value).then(result => {
                     res.json(result);
                 }, err => {
@@ -33,7 +46,7 @@ router.post('/', async function(req, res, next) {
             }
             break
         case 'released':
-            if (req.session.type == utils.SELLER) {
+            if (req.session.type == utils.SELLER || req.session.type == utils.CUSTOMER) {
                 model.getReleasedOfOrder(data.value).then(result => {
                     res.json(result);
                 }, err => {
