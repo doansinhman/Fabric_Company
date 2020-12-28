@@ -11,6 +11,8 @@ module.exports.MANAGER = 'Manager';
 module.exports.SELLER = 'Seller';
 module.exports.EMPLOYEE = ['Labor', 'Accountant', 'Cashier', 'Warehouse', 'Driver', 'Manager', 'Seller'];
 
+module.exports.SHIP_DEPT = 'Ship_Dept';
+
 module.exports.hashPw = (raw) => bcrypt.hashSync(raw, saltRounds);
 module.exports.comparePw = (raw, hash) => bcrypt.compareSync(raw, hash);
 

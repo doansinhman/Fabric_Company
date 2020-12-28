@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var model = require('../models/model');
+const { route } = require('./api/api');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', {
@@ -53,8 +54,11 @@ router.get('/info', function(req, res, next) {
 
 router.use('/customer', require('./customer'));
 router.use('/employee', require('./employee'));
+router.use('/ship-department', require('./ship-department'));
+
 router.use('/manager', require('./manager'));
 router.use('/seller', require('./seller'));
+router.use('/warehouse', require('./warehouse'));
 router.use('/signup', require('./signup'));
 
 router.use('/api', require('./api/api'))

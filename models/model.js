@@ -105,6 +105,17 @@ module.exports.getEmployeeByUsername = async(username) => {
     });
 }
 
+module.exports.getShipDeptByUsername = async(username) => {
+    let query = "SELECT * FROM SHIP_DEPARTMENT WHERE username='" + username + "';";
+    console.log(query);
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
 module.exports.getAllProducts = async() => {
     let query = "SELECT * FROM PRODUCT;";
     console.log(query);
@@ -307,6 +318,111 @@ module.exports.insertReleasement = async(orderId, sellId, release) => {
     });
 }
 
+module.exports.insertShipment = async(ship, whid, sdid) => {
+    let getOrderId = id => +id.split('_')[0];
+    let getProductId = id => +id.split('_')[1];
+
+    query = "SELECT insertShipmentAndGetId(?,?) as id;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [whid, sdid], async function(err, result, fields) {
+            if (err) console.log(err);
+
+            let shipmentId = result[0].id;
+            for (let pairId in ship) {
+                query = "INSERT INTO SHIP VALUES(?, ?, ?, ?);";
+                console.log([getOrderId(pairId), getProductId(pairId), shipmentId, +ship[pairId]]);
+                con.query(query, [getOrderId(pairId), getProductId(pairId), shipmentId, +ship[pairId]], function(err, result, fields) {
+                    if (err) reject(err);
+                });
+            }
+            resolve(true);
+        });
+    });
+}
+
+
+
+module.exports.getAllUnships = async() => {
+    let query = "CALL getAllUnships();";
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result[0]);
+        });
+    });
+}
+
+module.exports.getAllShipDepts = async() => {
+    let query = "SELECT id, vehicle FROM INTERNAL_SHIP UNION SELECT id, vehicle FROM EXTERNAL_SHIP;";
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getAllShipmentsOfWarehouse = async(whid) => {
+    let query = "SELECT * FROM SHIPMENT WHERE warehouseId=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [whid], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getDetailsOfShipment = async(shipmentId) => {
+    let query = "CALL getDetailsOfShipment(?);";
+    return new Promise((resolve, reject) => {
+        con.query(query, [shipmentId], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result[0]);
+        });
+    });
+}
+
+module.exports.getAllShipmentsOfShipDept = async(sdid) => {
+    let query = "SELECT * FROM SHIPMENT WHERE shipDeptId=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [sdid], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.triggerStartShipment = async(shipmentId, sdid) => {
+    let query = "UPDATE SHIPMENT SET status=? WHERE id=? AND shipDeptId=? AND status!=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, ['Shipping', shipmentId, sdid, 'Completed'], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.triggerFinishShipment = async(shipmentId, sdid) => {
+    let query = "UPDATE SHIPMENT SET status=? WHERE id=? AND shipDeptId=? AND status!=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, ['Completed', shipmentId, sdid, 'Preparing'], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.triggerLocateShipment = async(shipmentId, position, sdid) => {
+    let query = "UPDATE SHIPMENT SET position=? WHERE id=? AND shipDeptId=? AND status!=?;";
+    return new Promise((resolve, reject) => {
+        con.query(query, [position, shipmentId, sdid, 'Completed'], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+
 module.exports.testQuery = async() => {
     let query = "CALL getReleasedOfOrder(269);";
     return new Promise((resolve, reject) => {
@@ -321,7 +437,7 @@ module.exports.initSession();
 
 async function main() {
     try {
-        let ret = await module.exports.getReleasedOfOrder(269);
+        let ret = await module.exports.getDetailsOfShipment(1);
         console.log(ret);
     } catch (err) {
         console.log(err);

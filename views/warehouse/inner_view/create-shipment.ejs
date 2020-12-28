@@ -1,0 +1,64 @@
+<div id="cart" onclick="showModal();">
+    🛵
+</div>
+<div style='width: 100%; height: 100px;'></div>
+<table id='product-table' class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID đơn hàng</th>
+            <th>Địa chỉ giao</th>
+            <th>ID mặt hàng</th>
+            <th>Tên mặt hàng</th>
+            <th>Đơn vị</th>
+            <th>Đã xuất</th>
+            <th>Đã/đang giao</th>
+            <th>Giao</th>
+        </tr>
+    </thead>
+    <tbody id='table-body'>
+
+    </tbody>
+</table>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <h6>Tóm tắt chuyến giao hàng</h6>
+        <table id='ship-table' class="table table-light">
+            <thead>
+                <tr>
+                    <th>ID đơn hàng</th>
+                    <th>Địa chỉ</th>
+                    <th>ID mặt hàng</th>
+                    <th>Tên mặt hàng</th>
+                    <th>Đơn vị</th>
+                    <th>Giao</th>
+                </tr>
+            </thead>
+            <tbody id='ship-body'>
+
+            </tbody>
+        </table>
+        <div class="form-group">
+            <label for="sel1">Lựa chọn đơn vị vận chuyển:</label>
+            <select class="form-control" id="ship_dept">
+            </select>
+        </div>
+        <form class="form-inline">
+            <span class="col-3"></span>
+            <button type="button" class="col-2 btn btn-primary" onclick="insertShipment();">Tạo chuyến</button>
+            <span class="col-2"></span>
+            <button type="button" class="col-2 btn btn-secondary" onclick="closeModal();">Thoát</button>
+            <span class="col-3"></span>
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function() {
+        modal = document.getElementById("myModal");
+        getAllReleasements();
+    });
+</script>

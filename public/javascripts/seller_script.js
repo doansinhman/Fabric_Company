@@ -170,7 +170,10 @@ function detailOrder(id) {
 }
 
 function updateRelease(ele) {
-    RELEASE[ele.id.slice(7)] = +ele.value;
+    if (ele.value > 0)
+        RELEASE[ele.id.slice(7)] = +ele.value;
+    else
+        delete RELEASE[ele.id.slice(7)];
 }
 
 function insertReleasement() {

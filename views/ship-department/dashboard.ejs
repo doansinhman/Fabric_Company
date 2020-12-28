@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <% include ../include/header %>
+        <link rel='stylesheet' href='/stylesheets/sidenav.css'>
+        <script src="/javascripts/ship-department_script.js"></script>
+        <script>
+            $(document).ready(function() {
+                let navLock = $('#nav-lock');
+                let navReal = $('#nav-real');
+                let imgLock = $('#img-lock');
+                let imgReal = $('#img-real');
+                navReal.hide();
+                imgReal.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '30pt');
+                });
+                imgLock.click(function() {
+                    $(document.getElementsByClassName('sidenav')).css('padding-top', '50pt');
+                });
+            });
+        </script>
+</head>
+
+<body>
+    <% include ../include/navBarUser %>
+
+        <div class="sidenav">
+            <a class="nav-link" href="/ship-department/manage-shipment">Quản lí chuyến giao hàng</a>
+        </div>
+        <div class="content hero-image" style="overflow: scroll;">
+            <% if (plt == 'manage-shipment') { %>
+                <% include ./inner_view/manage-shipment %>
+                    <% } %>
+        </div>
+
+</body>
+
+<script>
+</script>
+
+</html>

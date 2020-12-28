@@ -1,18 +1,24 @@
-SET @nameRegex = '^[^`!@#$%^&*()\'":;,/|0-9\[\]{}]{1,}$';
-SET @phoneNumRegex = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
-SET @usernameRegex = @usernameRegex;
+delimiter //
+CREATE PROCEDURE initSession()
+BEGIN
+	SET @nameRegex = '^[^`!@#$%^&*()\'":;,/|0-9\[\]{}]{1,}$';
+	SET @phoneNumRegex = '^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
+	SET @usernameRegex = @usernameRegex;
 
-SET @nameMessage = 'Name is invalid.';
-SET @phoneNumMessage = 'Phone number invalid.';
-SET @birthdateMessage = 'The age of employee must be greater than 18.';
-SET @salaryMessage = 'Salary must be greater than 0.';
-SET @typeMessage = 'Type must be in (\'Labor\', \'Accountant\', \'Cashier\', \'Warehouse\', \'Driver\', \'Manager\', \'Seller\').';
-SET @usernameMessage = 'Username must includes at least 6 characters, accepts letter, digit, \'_\' and \'.\', and begin with a letter.';
-SET @pwMessage = 'Password must includes at least 6 characters.';
-SET @statusMessage = 'Status must be in (\'Pending\', \'Processing\', \'Completed\', \'Canceled\').';
-SET @oweMessage = 'Owe must not be negative.';
-SET @oweLimitMessage = 'OweLimit must not be negative.';
-SET @exceedOweLimitMessage = 'Owe exceeding the owe limit.';
+	SET @nameMessage = 'Name is invalid.';
+	SET @phoneNumMessage = 'Phone number invalid.';
+	SET @birthdateMessage = 'The age of employee must be greater than 18.';
+	SET @salaryMessage = 'Salary must be greater than 0.';
+	SET @typeMessage = 'Type must be in (\'Labor\', \'Accountant\', \'Cashier\', \'Warehouse\', \'Driver\', \'Manager\', \'Seller\').';
+	SET @usernameMessage = 'Username must includes at least 6 characters, accepts letter, digit, \'_\' and \'.\', and begin with a letter.';
+	SET @pwMessage = 'Password must includes at least 6 characters.';
+	SET @statusMessage = 'Status must be in (\'Pending\', \'Processing\', \'Completed\', \'Canceled\').';
+	SET @oweMessage = 'Owe must not be negative.';
+	SET @oweLimitMessage = 'OweLimit must not be negative.';
+	SET @exceedOweLimitMessage = 'Owe exceeding the owe limit.';
+	SET @orderCanceledMessage = 'This order was canceled';
+	SET @orderCompletedMessage = 'This order was completed';
+END;//
 
 CREATE TABLE IF NOT EXISTS CUSTOMER (
 	id			INT NOT NULL AUTO_INCREMENT,
@@ -90,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `ORDER` (
     sellId		INT,
     PRIMARY KEY (id)
 );
+-- ALTER TABLE `ORDER` MODIFY createDate DATETIME NOT NULL;
 
 
 CREATE TABLE IF NOT EXISTS PRODUCT (
@@ -121,6 +128,7 @@ CREATE TABLE IF NOT EXISTS SHIPMENT (
     position	VARCHAR(64) NOT NULL,
     warehouseId	INT NOT NULL,
     shipDeptId	INT NOT NULL,
+    time		DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -130,8 +138,8 @@ CREATE TABLE IF NOT EXISTS SHIP (
     shipmentId	INT NOT NULL,
     quantity	DECIMAL(10, 2) NOT NULL,
     -- unit ??
-    time		DATETIME NOT NULL,
-    weight		DECIMAL(10, 2) NOT NULL,
+   --  time		DATETIME NOT NULL,
+--     weight		DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (orderId, productId, shipmentId)
 );
 
@@ -174,8 +182,11 @@ CREATE TABLE IF NOT EXISTS PAYMENT (
 CREATE TABLE IF NOT EXISTS SHIP_DEPARTMENT (
 	id			INT NOT NULL AUTO_INCREMENT,
     type		VARCHAR(10),
+    username	VARCHAR(32) UNIQUE,
+    pw			VARCHAR(60) NOT NULL,
     PRIMARY KEY(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS INTERNAL_SHIP (
 	id			INT NOT NULL,
@@ -315,6 +326,12 @@ BEGIN
 	IF NEW.type NOT IN ('Internal', 'External') THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Type must be in (\'Internal\', \'External\').';
 	END IF;
+	IF NOT REGEXP_LIKE(NEW.username, @usernameRegex) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @usernameMessage;
+    END IF;
+    IF LENGTH(NEW.pw) < 6 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @pwMessage;
+    END IF;
 END;//
 
 delimiter //
@@ -324,6 +341,12 @@ BEGIN
 	IF NEW.type NOT IN ('Internal', 'External') THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Type must be in (\'Internal\', \'External\').';
 	END IF;
+	IF NOT REGEXP_LIKE(NEW.username, @usernameRegex) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @usernameMessage;
+    END IF;
+    IF LENGTH(NEW.pw) < 6 THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @pwMessage;
+    END IF;
 END;//
 
 delimiter //
@@ -386,23 +409,25 @@ BEGIN
 	END IF;
 END;//
 
-delimiter //
-CREATE TRIGGER TR_internal_ship_beforeinsert BEFORE INSERT ON INTERNAL_SHIP
-FOR EACH ROW
-BEGIN
-    INSERT INTO SHIP_DEPARTMENT VALUES(null, 'Internal');
-    SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
-    SET NEW.id = @newId;
-END;//
+-- DROP TRIGGER TR_internal_ship_beforeinsert;
+-- delimiter //
+-- CREATE TRIGGER TR_internal_ship_beforeinsert BEFORE INSERT ON INTERNAL_SHIP
+-- FOR EACH ROW
+-- BEGIN
+--     INSERT INTO SHIP_DEPARTMENT VALUES(null, 'Internal', NEW.username, NEW.pw);
+--     SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
+--     SET NEW.id = @newId;
+-- END;//
 
-delimiter //
-CREATE TRIGGER TR_external_ship_beforeinsert BEFORE INSERT ON EXTERNAL_SHIP
-FOR EACH ROW
-BEGIN
-    INSERT INTO SHIP_DEPARTMENT VALUES(null, 'External');
-    SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
-    SET NEW.id = @newId;
-END;//
+-- DROP TRIGGER TR_external_ship_beforeinsert;
+-- delimiter //
+-- CREATE TRIGGER TR_external_ship_beforeinsert BEFORE INSERT ON EXTERNAL_SHIP
+-- FOR EACH ROW
+-- BEGIN
+--     INSERT INTO SHIP_DEPARTMENT VALUES(null, 'External', NEW.username, NEW.pw);
+--     SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
+--     SET NEW.id = @newId;
+-- END;//
 
 DROP TRIGGER IF EXISTS TR_customer_beforeinsert;
 delimiter //
@@ -537,7 +562,7 @@ CREATE FUNCTION insertOrderAndGetId (
 )
 RETURNS INT DETERMINISTIC
 BEGIN
-	SELECT COALESCE(C.oweLimit, G.oweLimit) > C.owe
+	SELECT C.owe >= COALESCE(C.oweLimit, G.oweLimit) 
     FROM CUSTOMER AS C INNER JOIN `GROUP` AS G ON C.groupName=G.name
     WHERE C.id=_cusId LIMIT 1 INTO @exceedOweLimit;
     
@@ -545,7 +570,7 @@ BEGIN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @exceedOweLimitMessage;
     END IF;
     
-    INSERT INTO `ORDER` VALUES(null, CURRENT_DATE(), 'Pending', _note, _address, _cusId, _sellId);
+    INSERT INTO `ORDER` VALUES(null, CURRENT_TIME(), 'Pending', _note, _address, _cusId, _sellId);
     SELECT MAX(id) FROM `ORDER` LIMIT 1 INTO @newId;
     RETURN @newId;
 END;//
@@ -595,6 +620,14 @@ CREATE FUNCTION insertReleasementAndGetId (
 )
 RETURNS INT DETERMINISTIC
 BEGIN
+	SELECT status FROM `ORDER` WHERE id=_orderId LIMIT 1 INTO @status;
+    IF @status = 'Canceled' THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @orderCanceledMessage;
+    END IF;
+    IF @status = 'Completed' THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @orderCompletedMessage;
+    END IF;
+    
 	INSERT INTO RELEASEMENT VALUES(null, _orderId, CURRENT_TIME(), _sellId);
     SELECT MAX(id) FROM RELEASEMENT LIMIT 1 INTO @newId;
     RETURN @newId;
@@ -618,8 +651,82 @@ BEGIN
     INTO @cusId, @price;
 	
     UPDATE CUSTOMER SET owe = owe + @price WHERE id = @cusId;
+    UPDATE PRODUCT SET quantity = quantity - _quantity WHERE id = _productId;
 END;//
 
+DROP PROCEDURE IF EXISTS getAllUnships;
+delimiter //
+CREATE PROCEDURE getAllUnships ()
+BEGIN
+	SELECT TB1.orderId, TB1.address, TB1.productId, TB1.name, TB1.unit, TB1.released_quantity, IFNULL(TB2.shipped_quantity, 0) AS shipped_quantity FROM
+    (
+		SELECT RLM.orderId, O.address, RL.productId, P.name, P.unit, SUM(RL.quantity) AS released_quantity
+		FROM `RELEASE` AS RL INNER JOIN RELEASEMENT AS RLM ON RL.releaseId = RLM.id
+		INNER JOIN `ORDER` AS O ON RLM.orderId=O.id
+		INNER JOIN PRODUCT AS P ON RL.productId=P.id
+		GROUP BY RLM.orderId, RL.productId
+    ) AS TB1
+    LEFT OUTER JOIN 
+    (
+		SELECT S.orderId, productId, SUM(S.quantity) as shipped_quantity FROM SHIP AS S
+		GROUP BY S.orderId, S.productId
+    ) AS TB2
+    ON TB1.orderId=TB2.orderId AND TB1.productId=TB2.productId
+    WHERE TB1.released_quantity != IFNULL(TB2.shipped_quantity, 0);
+END;//
+
+DROP FUNCTION IF EXISTS insertShipmentAndGetId;
+delimiter //
+CREATE FUNCTION insertShipmentAndGetId (
+    _whid	INT,
+    _sdid	INT
+)
+RETURNS INT DETERMINISTIC
+BEGIN
+	INSERT INTO SHIPMENT VALUES(null, 'Preparing', 'Warehouse', _whid, _sdid, CURRENT_TIME());
+    SELECT MAX(id) FROM SHIPMENT LIMIT 1 INTO @newId;
+    RETURN @newId;
+END;//
+
+DROP PROCEDURE IF EXISTS getDetailsOfShipment;
+delimiter //
+CREATE PROCEDURE getDetailsOfShipment (
+	_shipmentId		INT
+)
+BEGIN
+	SELECT S.orderId, S.productId, P.name, P.unit, S.quantity, C.name AS cusName, O.address 
+	FROM SHIP AS S INNER JOIN `ORDER` AS O ON S.orderId=O.id
+	INNER JOIN CUSTOMER AS C ON O.cusId = C.id
+	INNER JOIN PRODUCT AS P ON S.productId=P.id
+	WHERE S.shipmentId = _shipmentId;
+END;//
+
+delimiter //
+CREATE PROCEDURE insertInternalShip (
+	_driverId	INT,
+    _vehicle	VARCHAR(16),
+    _license	VARCHAR(16),
+	_username	VARCHAR(32),
+	_pw			VARCHAR(60)
+)
+BEGIN
+	INSERT INTO SHIP_DEPARTMENT VALUES(null, 'Internal', _username, _pw);
+    SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
+    INSERT INTO INTERNAL_SHIP VALUES(@newId, _driverId, _vehicle, _license);    
+END;//
+
+delimiter //
+CREATE PROCEDURE insertExternalShip (
+	_driverName	INT,
+    _vehicle	VARCHAR(16),
+	_username	VARCHAR(32),
+	_pw			VARCHAR(60)
+)
+BEGIN
+	INSERT INTO SHIP_DEPARTMENT VALUES(null, 'External', _username, _pw);
+    SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
+    INSERT INTO INTERNAL_SHIP VALUES(@newId, _driverName, _vehicle);    
+END;//
 
 -- DROP PROCEDURE IF EXISTS usp_customer_update;
 -- delimiter //

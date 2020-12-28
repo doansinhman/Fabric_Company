@@ -1,4 +1,4 @@
--- CUSTOMER, PRODUCT, ORDER, INCLUDE, RELEASE, RELEASEMENT: use GUI
+-- CUSTOMER, PRODUCT, ORDER, INCLUDE, RELEASE, RELEASEMENT, SHIP, SHIPMENT: use GUI
 -- GROUP
 INSERT INTO `GROUP` VALUES('Default', 5000000);
 INSERT INTO `GROUP` VALUES('Grade A', 100000000);
@@ -50,4 +50,17 @@ INSERT INTO EMPLOYEE VALUES(null, 'SELLER C', 1, 'C home', '0123456789', '2000-0
 INSERT INTO EMPLOYEE VALUES(null, 'SELLER D', 1, 'D home', '0123456789', '2000-01-01', 18000000, 'Seller', 'seller4', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
 INSERT INTO EMPLOYEE VALUES(null, 'SELLER E', 1, 'E home', '0123456789', '2000-01-01', 18000000, 'Seller', 'seller5', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
 
--- SHIPMENT, SHIP, RECEIPT, PAYMENT, INTERNAL_SHIP, EXTERNAL_SHIP: Coming soon.
+-- SHIP_DEPARTMENT
+CALL insertInternalShip(100023, 'Lamborghini', 'LicensePlate1', 'shipdept1', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertInternalShip(100024, 'BMW', 'LicensePlate2', 'shipdept2', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertInternalShip(100025, 'Rolls Royce', 'LicensePlate3', 'shipdept4', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertInternalShip(100026, 'Porsche', 'LicensePlate4', 'shipdept4', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertInternalShip(100027, 'Ferrari', 'LicensePlate5', 'shipdept5', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+
+CALL insertExternalShip('Ex Driver A', 'Super Cub', 'shipdept6', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertExternalShip('Ex Driver B', 'Sirius', 'shipdept7', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertExternalShip('Ex Driver C', 'Dream', 'shipdept8', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertExternalShip('Ex Driver D', 'Wave', 'shipdept9', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+CALL insertExternalShip('Ex Driver E', 'Exciter', 'shipdept10', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
+
+-- RECEIPT, PAYMENT: Coming soon.
