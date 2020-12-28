@@ -579,11 +579,12 @@ END;//
 DROP PROCEDURE IF EXISTS getDetailOfOrder;
 delimiter //
 CREATE PROCEDURE getDetailOfOrder (
-    orderId		INT
+    _orderId		INT
 )
 BEGIN
 	SELECT O.id as orderId, createDate, status, note, O.address as orderAddress, cusId, sellId, cusId, name, gender, C.address AS cusAddress, phoneNum, birthdate, owe, oweLimit, groupName
-	FROM `ORDER` AS O, CUSTOMER AS C WHERE O.cusId = C.id;
+	FROM `ORDER` AS O, CUSTOMER AS C
+  WHERE O.cusId = C.id AND O.id = _orderId;
 END;//
 
 DROP PROCEDURE IF EXISTS getReleasedOfOrder;
@@ -642,14 +643,19 @@ CREATE PROCEDURE insertReleaseAndAddOwe (
 )
 BEGIN
 	INSERT INTO `RELEASE` VALUES(_productId, _releaseId, _quantity);
-    
-    SELECT O.cusId, _quantity * I.unitPrice
-    FROM RELEASEMENT AS RLM INNER JOIN `ORDER` AS O ON RLM.orderId=O.id 
-    INNER JOIN INCLUDE AS I ON O.id=I.orderId
-    WHERE I.productId=_productId
-    LIMIT 1
-    INTO @cusId, @price;
 	
+	SELECT O.cusId
+    FROM RELEASEMENT AS RLM INNER JOIN `ORDER` AS O ON RLM.orderId=O.id
+    WHERE RLM.id=_releaseId
+    LIMIT 1
+    INTO @cusId;
+    
+	SELECT _quantity * I.unitPrice
+    FROM RELEASEMENT AS RLM INNER JOIN INCLUDE AS I ON RLM.orderId=I.orderId
+    WHERE RLM.id=_releaseId AND I.productId=_productId
+    LIMIT 1
+    INTO @price;
+    
     UPDATE CUSTOMER SET owe = owe + @price WHERE id = @cusId;
     UPDATE PRODUCT SET quantity = quantity - _quantity WHERE id = _productId;
 END;//

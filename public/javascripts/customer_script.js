@@ -30,13 +30,7 @@ function getAllOrders() {
                     tr.addTableData(ord.address);
                     tr.addTableData(ord.cusId);
                     tr.addTableData(ord.sellId);
-                    if (ord.status != 'Pending') {
-                        tr.addTableData('<button type="button" class="btn btn-outline-primary" onclick="detailOrder(' + ord.id + ');">Chi tiết</button>');
-                    } else {
-                        tr.addTableData('<button type="button" class="btn btn-outline-primary" onclick="detailOrder(' + ord.id + ');">Chi tiết</button>\
-                                        <button type="button" class="btn btn-outline-success" onclick="confirmOrder(' + ord.id + ');">Duyệt</button>\
-                                        <button type="button" class="btn btn-outline-danger" onclick="cancelOrder(' + ord.id + ');">Huỷ</button>');
-                    }
+                    tr.addTableData('<button type="button" class="btn btn-outline-primary" onclick="detailOrder(' + ord.id + ');">Chi tiết</button>')
                     tbody.append(tr.getHtmlCode());
                 });
             }
