@@ -3,11 +3,6 @@ var router = express.Router();
 var model = require('../../models/model');
 var utils = require('../utils');
 
-var formidable = require('formidable');
-var mv = require('mv');
-var fs = require('fs');
-const { json } = require('body-parser');
-
 router.post('/get', async function(req, res, next) {
     if (utils.EMPLOYEE.includes(req.session.type)) {
         model.getEmployeeById(req.session.user.id).then(result => {

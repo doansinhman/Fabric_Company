@@ -1,4 +1,5 @@
--- CUSTOMER, PRODUCT, ORDER, INCLUDE, RELEASE, RELEASEMENT, SHIP, SHIPMENT: use GUI
+-- CUSTOMER, PRODUCT, ORDER, INCLUDE, RELEASE, RELEASEMENT, SHIP, SHIPMENT, RECEIPT, PAYMENT: use GUI
+
 -- GROUP
 INSERT INTO `GROUP` VALUES('Default', 5000000);
 INSERT INTO `GROUP` VALUES('Grade A', 100000000);
@@ -62,5 +63,3 @@ CALL insertExternalShip('Ex Driver B', 'Sirius', 'shipdept7', '$2b$10$xTtrfB10mZ
 CALL insertExternalShip('Ex Driver C', 'Dream', 'shipdept8', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
 CALL insertExternalShip('Ex Driver D', 'Wave', 'shipdept9', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
 CALL insertExternalShip('Ex Driver E', 'Exciter', 'shipdept10', '$2b$10$xTtrfB10mZL6Q/h2FzIIw.y2fGx3/RJIu5NCTjL32ZdYCjgEfkBYG');
-
--- RECEIPT, PAYMENT: Coming soon.

@@ -3,12 +3,6 @@ var router = express.Router();
 var model = require('../../models/model');
 var utils = require('../utils');
 
-var formidable = require('formidable');
-var mv = require('mv');
-var fs = require('fs');
-const { json } = require('body-parser');
-const { cpuUsage } = require('process');
-
 router.post('/', async function(req, res, next) {
     let data = req.body;
     switch (data.target) {

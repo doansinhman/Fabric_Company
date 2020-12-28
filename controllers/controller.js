@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var model = require('../models/model');
-const { route } = require('./api/api');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', {

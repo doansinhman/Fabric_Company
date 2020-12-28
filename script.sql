@@ -1,4 +1,4 @@
-DROP PROCEDURE initSession;
+DROP PROCEDURE IF EXISTS initSession;
 delimiter //
 CREATE PROCEDURE initSession()
 BEGIN
@@ -13,7 +13,8 @@ BEGIN
 	SET @typeMessage = 'Type must be in (\'Labor\', \'Accountant\', \'Cashier\', \'Warehouse\', \'Driver\', \'Manager\', \'Seller\').';
 	SET @usernameMessage = 'Username must includes at least 6 characters, accepts letter, digit, \'_\' and \'.\', and begin with a letter.';
 	SET @pwMessage = 'Password must includes at least 6 characters.';
-	SET @statusMessage = 'Status must be in (\'Pending\', \'Processing\', \'Completed\', \'Canceled\').';
+	SET @orderStatusMessage = 'Status must be in (\'Pending\', \'Processing\', \'Completed\', \'Canceled\').';
+    SET @shipmentStatusMessage = 'Status must be in (\'Preparing\', \'Shipping\', \'Completed\').';
 	SET @oweMessage = 'Owe must not be negative.';
 	SET @oweLimitMessage = 'OweLimit must not be negative.';
 	SET @exceedOweLimitMessage = 'Owe exceeding the owe limit.';
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS SELLER (
 
 CREATE TABLE IF NOT EXISTS `ORDER` (
 	id			INT NOT NULL AUTO_INCREMENT,
-    createDate	DATE NOT NULL,
+    createDate	DATETIME NOT NULL,
     status		VARCHAR(10) NOT NULL,
     note		VARCHAR(64),
     address		VARCHAR(64) NOT NULL,
@@ -138,9 +139,6 @@ CREATE TABLE IF NOT EXISTS SHIP (
     productId	INT NOT NULL,
     shipmentId	INT NOT NULL,
     quantity	DECIMAL(10, 2) NOT NULL,
-    -- unit ??
-   --  time		DATETIME NOT NULL,
---     weight		DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (orderId, productId, shipmentId)
 );
 
@@ -157,8 +155,6 @@ CREATE TABLE IF NOT EXISTS `RELEASE` (
 	productId	INT NOT NULL,
     releaseId	INT NOT NULL,
     quantity	DECIMAL(10, 2) NOT NULL,
-    -- unitPrice	BIGINT,
-    -- vat			BIGINT,
     PRIMARY KEY (productId, releaseId)
 );
 
@@ -208,8 +204,6 @@ CREATE TABLE IF NOT EXISTS EXTERNAL_SHIP (
 ALTER TABLE customer ADD CONSTRAINT FK_customer_group FOREIGN KEY(groupName) REFERENCES `GROUP`(name)
 	ON DELETE SET DEFAULT
     ON UPDATE CASCADE;
-    
-ALTER TABLE employee ADD CONSTRAINT CHK_employee_salary CHECK (salary > 0);
 
 ALTER TABLE labor ADD CONSTRAINT FK_labor_employee FOREIGN KEY(id) REFERENCES EMPLOYEE(id)
 	ON DELETE CASCADE;
@@ -307,7 +301,7 @@ CREATE TRIGGER TR_order_beforeinsert BEFORE INSERT ON `ORDER`
 FOR EACH ROW
 BEGIN
 	IF NEW.status NOT IN ('Pending', 'Processing', 'Completed', 'Canceled') THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @statusMessage;
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @orderStatusMessage;
 	END IF;
 END;//
 
@@ -316,7 +310,25 @@ CREATE TRIGGER TR_order_beforeupdate BEFORE UPDATE ON `ORDER`
 FOR EACH ROW
 BEGIN
 	IF NEW.status NOT IN ('Pending', 'Processing', 'Completed', 'Canceled') THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @statusMessage;
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @orderStatusMessage;
+	END IF;
+END;//
+
+delimiter //
+CREATE TRIGGER TR_shipment_beforeinsert BEFORE UPDATE ON SHIPMENT
+FOR EACH ROW
+BEGIN
+	IF NEW.status NOT IN ('Preparing', 'Shipping', 'Completed') THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @shipmentStatusMessage;
+	END IF;
+END;//
+
+delimiter //
+CREATE TRIGGER TR_shipment_beforeupdate BEFORE UPDATE ON SHIPMENT
+FOR EACH ROW
+BEGIN
+	IF NEW.status NOT IN ('Preparing', 'Shipping', 'Completed') THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @shipmentStatusMessage;
 	END IF;
 END;//
 
@@ -410,26 +422,6 @@ BEGIN
 	END IF;
 END;//
 
--- DROP TRIGGER TR_internal_ship_beforeinsert;
--- delimiter //
--- CREATE TRIGGER TR_internal_ship_beforeinsert BEFORE INSERT ON INTERNAL_SHIP
--- FOR EACH ROW
--- BEGIN
---     INSERT INTO SHIP_DEPARTMENT VALUES(null, 'Internal', NEW.username, NEW.pw);
---     SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
---     SET NEW.id = @newId;
--- END;//
-
--- DROP TRIGGER TR_external_ship_beforeinsert;
--- delimiter //
--- CREATE TRIGGER TR_external_ship_beforeinsert BEFORE INSERT ON EXTERNAL_SHIP
--- FOR EACH ROW
--- BEGIN
---     INSERT INTO SHIP_DEPARTMENT VALUES(null, 'External', NEW.username, NEW.pw);
---     SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
---     SET NEW.id = @newId;
--- END;//
-
 DROP TRIGGER IF EXISTS TR_customer_beforeinsert;
 delimiter //
 CREATE TRIGGER TR_customer_beforeinsert BEFORE INSERT ON CUSTOMER
@@ -500,10 +492,6 @@ BEGIN
 	END IF;
 	INSERT INTO CUSTOMER VALUES(null, name, gender, address, phoneNum, birthdate, owe, oweLimit, groupName, username, pw);
 END;//
-
-
-
-
 
 DROP FUNCTION IF EXISTS insertProductAndGetId;
 delimiter //
@@ -604,14 +592,7 @@ CREATE PROCEDURE getReleasedOfOrder (
     _orderId		INT
 )
 BEGIN
--- 	SELECT P.id, P.name, P.quantity, P.unit, I.quantity ordered_quantity, IFNULL(SUM(RL.quantity), 0) AS released_quantity
--- 	FROM PRODUCT as P INNER JOIN `INCLUDE` as I ON P.id = I.productId
--- 	INNER JOIN `ORDER` AS O ON O.id = I.orderId
--- 	LEFT OUTER JOIN RELEASEMENT as RLM ON RLM.orderId = O.id
--- 	LEFT OUTER JOIN `RELEASE` as RL ON RL.releaseId = RLM.id AND P.id=RL.productId
---     WHERE O.id = _orderId
--- 	GROUP BY P.id;
-    SELECT TB1.id, TB1.name, TB1.quantity, TB1.unit, TB1.ordered_quantity, TB1.released_quantity, IFNULL(TB2.shipped_quantity, 0) AS shipped_quantity FROM
+  SELECT TB1.id, TB1.name, TB1.quantity, TB1.unit, TB1.ordered_quantity, TB1.released_quantity, IFNULL(TB2.shipped_quantity, 0) AS shipped_quantity FROM
 	(
 		SELECT P.id, P.name, P.quantity, P.unit, I.quantity AS ordered_quantity, IFNULL(SUM(RL.quantity), 0) AS released_quantity
 		FROM PRODUCT as P INNER JOIN `INCLUDE` as I ON P.id = I.productId
@@ -746,265 +727,3 @@ BEGIN
     SELECT MAX(id) FROM SHIP_DEPARTMENT LIMIT 1 INTO @newId;
     INSERT INTO INTERNAL_SHIP VALUES(@newId, _driverName, _vehicle);    
 END;//
-
--- DROP PROCEDURE IF EXISTS usp_customer_update;
--- delimiter //
--- CREATE PROCEDURE usp_customer_update(
--- 	IN 	_id			INT,
--- 	IN	_name		VARCHAR(32),
---     IN	_address	VARCHAR(64),
---     IN	_phoneNum	VARCHAR(15),
---     IN	_birthdate	DATE
--- )
--- BEGIN
--- 	UPDATE CUSTOMER
--- 		SET name = _name, address = _address, phoneNum = _phoneNum, birthdate = _birthdate
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_customer_updateOwe;
--- delimiter //
--- CREATE PROCEDURE usp_customer_updateOwe(
--- 	IN 	_id			INT,
--- 	IN	_owe		BIGINT
--- )
--- BEGIN
--- 	UPDATE CUSTOMER
--- 		SET owe = _owe
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_customer_updateOweLimitAndGroup;
--- delimiter //
--- CREATE PROCEDURE usp_customer_updateOweLimitAndGroup(
--- 	IN 	_id			INT,
--- 	IN	_oweLimit	BIGINT,
---     IN	_groupName	VARCHAR(32)
--- )
--- BEGIN
--- 	UPDATE CUSTOMER
--- 		SET oweLimit = _oweLimit, groupName = _groupName
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_customer_updatePw;
--- delimiter //
--- CREATE PROCEDURE usp_customer_updatePw(
--- 	IN 	_id			INT,
--- 	IN	_pw			VARCHAR(60)
--- )
--- BEGIN
--- 	UPDATE CUSTOMER
--- 		SET pw = _pw
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_group_insert;
--- delimiter //
--- CREATE PROCEDURE usp_group_insert(
--- 	IN	name		VARCHAR(32),
---     IN	oweLimit	BIGINT
--- )
--- BEGIN
--- 	INSERT INTO `GROUP` VALUES(name, oweLimit);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_group_update;
--- delimiter //
--- CREATE PROCEDURE usp_group_update(
--- 	IN	_name		VARCHAR(32),
---     IN	_oweLimit	BIGINT
--- )
--- BEGIN
--- 	UPDATE `GROUP`
--- 		SET name = _name, oweLimit = _oweLimit
---     WHERE name = _name;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_employee_insert;
--- delimiter //
--- CREATE PROCEDURE usp_employee_insert(
--- 	name 		VARCHAR(32),
---     gender		BOOL,
---     address		VARCHAR(64),
---     phoneNum	VARCHAR(15),
---     birthdate	DATE,
---     salary		BIGINT,
---     type		VARCHAR(15),
---     username	VARCHAR(32),
---     pw			VARCHAR(6)
--- )
--- BEGIN
--- 	INSERT INTO EMPLOYEE VALUES(null, name, gender, address, phoneNum, birthdate, salary, type, username, pw);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_employee_updateInfo;
--- delimiter //
--- CREATE PROCEDURE usp_employee_updateInfo(
--- 	_id			INT,
--- 	_name 		VARCHAR(32),
---     _address	VARCHAR(64),
---     _phoneNum	VARCHAR(15),
---     _birthdate	DATE
--- )
--- BEGIN
--- 	UPDATE EMPLOYEE
--- 		SET name = _name, address = _address, phoneNum = _phoneNum, birthdate = _birthdate
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_employee_updateSalaryAndType;
--- delimiter //
--- CREATE PROCEDURE usp_employee_updateSalaryAndType(
--- 	_id			INT,
--- 	_salary		BIGINT,
---     _type		VARCHAR(15)
--- )
--- BEGIN
--- 	UPDATE EMPLOYEE
--- 		SET salary = _salary, type = _type
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_employee_updatePw;
--- delimiter //
--- CREATE PROCEDURE usp_employee_updatePw(
--- 	IN 	_id			INT,
--- 	IN	_pw			VARCHAR(60)
--- )
--- BEGIN
--- 	UPDATE EMPLOYEE
--- 		SET pw = _pw
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_order_insert;
--- delimiter //
--- CREATE PROCEDURE usp_order_insert(
---     IN	_createDate	DATE,
---     IN	_status		VARCHAR(10),
---     IN	_note		VARCHAR(64),
---     IN	_address	VARCHAR(64),
---     IN	_cusId		INT,
---     IN	_sellId		INT
--- )
--- BEGIN
--- 	IF _createDate IS NULL THEN
--- 		SET _createDate = CURRENT_DATE();
--- 	END IF;
---     IF _status IS NULL THEN
--- 		SET _status = 'Pending';
--- 	END IF;
--- 	INSERT INTO `ORDER` VALUES(null, _createDate, _status, _note, _address, _cusId, _sellId);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_order_updateStatus;
--- delimiter //
--- CREATE PROCEDURE usp_order_updateStatus(
---     IN	_id			INT,
---     IN	_status		VARCHAR(10)
--- )
--- BEGIN
--- 	UPDATE `ORDER`
--- 		SET status = _status
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_product_insert;
--- delimiter //
--- CREATE PROCEDURE usp_product_insert(
---     IN	name	 		VARCHAR(32),
---     IN	description		VARCHAR(32),
---     IN	color			VARCHAR(16),
---     IN	image			VARCHAR(16),
---     IN	type			VARCHAR(16),
---     IN	form			VARCHAR(16),
---     IN	supplier		VARCHAR(32),
---     IN	quantity		DECIMAL(10, 2),
---     IN	unit			VARCHAR(10)
--- )
--- BEGIN
--- 	INSERT INTO PRODUCT VALUES(null, name, description, color, image, type, form, supplier, quantity, unit);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_product_update;
--- delimiter //
--- CREATE PROCEDURE usp_product_update(
--- 	IN	_id				INT,
---     IN	_name	 		VARCHAR(32),
---     IN	_description	VARCHAR(32),
---     IN	_color			VARCHAR(16),
---     IN	_image			VARCHAR(16),
---     IN	_type			VARCHAR(16),
---     IN	_form			VARCHAR(16),
---     IN	_supplier		VARCHAR(32),
---     IN	_quantity		DECIMAL(10, 2),
---     IN	_unit			VARCHAR(10)
--- )
--- BEGIN
--- 	UPDATE PRODUCT
--- 		SET name = _name, description = _description, color = _color, image = _image, type = _type, form = form, supplier = _supplier, quantity = _quantity, unit = _unit
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_include_insert;
--- delimiter //
--- CREATE PROCEDURE usp_include_insert(
---     IN	orderId		INT,
---     IN	productId	INT,
---     IN	quantity	DECIMAL(10, 2)
--- )
--- BEGIN
--- 	INSERT INTO INCLUDE VALUES(orderId, productId, quantity);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_shipment_insert;
--- delimiter //
--- CREATE PROCEDURE usp_shipment_insert(
---     IN	status		VARCHAR(32),
---     IN	position	VARCHAR(64),
---     IN	warehouseId	INT,
---     In	shipDeptId	INT
--- )
--- BEGIN
--- 	INSERT INTO SHIPMENT VALUES(null, status, position, warehouseId, shipDeptId);
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_shipment_updateStatusAndPosition;
--- delimiter //
--- CREATE PROCEDURE usp_shipment_updateStatusAndPosition(
--- 	IN	_id			INT,
---     IN	_status		VARCHAR(32),
---     IN	_position	VARCHAR(64)
--- )
--- BEGIN
--- 	UPDATE SHIPMENT
--- 		SET status = _status, position = _position
---     WHERE id = _id;
--- END;//
-
--- DROP PROCEDURE IF EXISTS usp_ship_insert;
--- delimiter //
--- CREATE PROCEDURE usp_ship_insert(
---     IN	orderId		INT,
---     IN	productId	INT,
---     IN	shipmentId	INT,
---     IN	quantity	DECIMAL(10, 2),
---     IN	time		DATETIME,
---     IN	weight		DECIMAL(10, 2)
--- )
--- BEGIN
--- 	INSERT INTO SHIP VALUES(orderId, productId, shipementId, quantity, time, weight);
--- END;//
-
--- CALL usp_group_insert('Default', 5000000);
--- CALL usp_customer_insert('Khach hang B', 'HCMUT', '0123456789', '2001-11-22', null, null, null);
-
--- REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'user1'@'localhost';
--- GRANT EXECUTE ON new_schema.* TO 'user1'@'localhost';
--- CREATE USER 'user1'@'localhost' IDENTIFIED BY 'user1';
--- GRANT ALL ON CUSTOMER TO 'user1'@'localhost';
--- SHOW GRANTS;
--- GRANT EXECUTE ON new_schema.* TO 'user1'@'localhost';
--- GRANT ALL PRIVILEGES ON new_schema.* TO 'user1'@'localhost';
--- REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'user1'@'localhost';

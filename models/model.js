@@ -1,12 +1,9 @@
 const mysql = require('mysql');
 const utils = require('../controllers/utils')
+const fs = require('fs');
 
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "ass2",
-    password: "ass2"
-});
+var con = mysql.createConnection(JSON.parse(fs.readFileSync('sql.conf')));
+
 con.connect(function(err) {
     if (err) throw err;
 });
@@ -308,13 +305,6 @@ module.exports.insertReleasement = async(orderId, sellId, release) => {
                     if (err) reject(err);
                 });
             }
-
-            // if (checkIfOrderCompleted(await module.exports.getReleasedOfOrder(orderId))) {
-            //     query = "UPDATE `ORDER` SET status=? WHERE id=?;";
-            //     con.query(query, ['Completed', orderId], async function(err, result, fields) {
-            //         if (err) console.log(err);
-            //     });
-            // }
             resolve(true);
         });
     });

@@ -1,14 +1,16 @@
 ## Fabric Company - v1.0.0
-## ...
+##
+##### A simple Node.JS web app using Express, EJS, MySQL.
+##
 
-## How to build this app:
-Use **MySQL**, run all script codes in **script.sql** as schema **ass2**, replace password of **root** user at the top of the file **models/model.js** 
+## Build this app:
 ```console
 $ git clone https://github.com/doansinhman/Fabric_Company.git
 $ cd Fabric_Company
 $ npm install
 ```
-## How to run this app:
+Use **MySQL**, configure your connection in **sql.conf**, then run all script codes in **script.sql**, **init.sql**.
+## Run this app:
 ```console
 $ cd Fabric_Company
 $ npm start
