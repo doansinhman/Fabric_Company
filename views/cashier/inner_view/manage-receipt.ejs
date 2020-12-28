@@ -1,0 +1,43 @@
+<div style='width: 100%; height: 100px;'></div>
+<table id='product-table' class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tổng tiền</th>
+            <th>Thời gian</th>
+            <th>ID khách hàng</th>
+            <th>ID thu ngân</th>
+        </tr>
+    </thead>
+    <tbody id='table-body'>
+
+    </tbody>
+</table>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <h4>Thêm phiếu thu</h4>
+        <form>
+            <div class="form-group">
+                <label for="amount">Tổng tiền:</label>
+                <input type="number" class="form-control" min=0 id="amount" placeholder="Nhập số tiền" name="amount">
+            </div>
+            <div class="form-group">
+                <label for="cusId">ID khách hàng:</label>
+                <input type="number" class="form-control" min=0 id="cusId" placeholder="Nhập ID khách hàng" name="cusId">
+            </div>
+            <button type="button" class="col-2 btn btn-primary" onclick="insertReceipt();">Thêm</button>
+            <button type="button" class="col-2 btn btn-secondary" onclick="closeModal();">Huỷ</button>
+        </form>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function() {
+        modal = document.getElementById("myModal");
+        getAllReceipts();
+    });
+</script>

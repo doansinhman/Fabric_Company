@@ -425,6 +425,50 @@ module.exports.triggerLocateShipment = async(shipmentId, position, sdid) => {
     });
 }
 
+module.exports.getAllReceipts = async() => {
+    let query = "SELECT * FROM RECEIPT;";
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.getAllPayments = async() => {
+    let query = "SELECT * FROM PAYMENT;";
+    return new Promise((resolve, reject) => {
+        con.query(query, function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
+}
+
+module.exports.insertReceipt = async(amount, cusId, cashierId) => {
+    let query = "INSERT INTO RECEIPT VALUES(null,?,?,?,?);"
+    return new Promise((resolve, reject) => {
+        con.query(query, [amount, new Date(), cusId, cashierId], function(err, result, fields) {
+            if (err) reject(err);
+            query = "UPDATE CUSTOMER SET owe=owe-? WHERE id=?;";
+            con.query(query, [amount, cusId], function(err, result, fields) {
+                if (err) reject(err);
+                resolve(result);
+            });
+        })
+    });
+}
+
+module.exports.insertPayment = async(amount, goal, cashierId) => {
+    let query = "INSERT INTO PAYMENT VALUES(null,?,?,?,?);"
+    return new Promise((resolve, reject) => {
+        con.query(query, [amount, new Date(), goal, cashierId], function(err, result, fields) {
+            if (err) reject(err);
+            resolve(result);
+        })
+    });
+}
+
 async function checkOrderStatusAfterFinishShipment(shipmentId) {
     let checkIfOrderCompleted = releasedOfOrder => {
         for (let i = 0; i < releasedOfOrder.length; i++) {

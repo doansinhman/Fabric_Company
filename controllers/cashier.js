@@ -3,55 +3,84 @@ var router = express.Router();
 var model = require('../models/model');
 var utils = require('./utils');
 
-/* GET users listing. */
-function isCashierLoggingIn(req) {
-    return req.session.type == 'cashier';
-}
 router.get('/', function(req, res, next) {
-    if (isCashierLoggingIn(req))
+    if (req.session.type == utils.CASHIER)
         res.redirect('/cashier/dashboard');
     else {
-        res.redirect('/cashier/login');
-    }
-});
-router.get('/login', function(req, res, next) {
-    if (isCashierLoggingIn(req))
-        res.redirect('/cashier/dashboard');
-    else {
-        res.render('./cashier/login', { title: "Thu ngân", userType: req.session.type });
-    }
-});
-router.post('/login', async function(req, res, next) {
-    if (isCashierLoggingIn(req))
-        res.redirect('/cashier/dashboard');
-    else {
-        let user = await utils.Cashier.login(req.body.user_name, req.body.password);
-        if (!user) {
-            res.json(false);
-        } else {
-            console.log('Log in successfully');
-            req.session.user_name = user.user_name;
-            console.log('userId = ' + user.id);
-            req.session.user = user;
-            req.session.type = 'cashier';
-            res.json(true);
-        }
+        res.redirect('/employee/login');
     }
 });
 
 router.get('/dashboard', function(req, res, next) {
-    if (isCashierLoggingIn(req)) {
-        res.render('./cashier/dashboard', { title: "Thu ngân", h1: "Smart Food Court System", p: "Trang dành cho Thu ngân", userType: req.session.type })
+    if (req.session.type == utils.CASHIER) {
+        res.render('./cashier/dashboard', { title: "Thu ngân", plt: "none", userType: req.session.type })
     } else {
-        res.redirect('/cashier/login');
+        res.redirect('/employee/login');
     }
 });
 
-router.get('/order', function(req, res, next) {
-    if (isCashierLoggingIn(req)) {
-        res.render('./cashier/order', { title: "Kiểm tra đơn hàng", userType: req.session.type })
+router.get('/manage-receipt', function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        res.render('./cashier/dashboard', { title: "Thu ngân", plt: "manage-receipt", userType: req.session.type })
     } else {
-        res.redirect('/cashier/login');
+        res.redirect('/employee/login');
     }
 });
+
+router.get('/manage-payment', function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        res.render('./cashier/dashboard', { title: "Thu ngân", plt: "manage-payment", userType: req.session.type })
+    } else {
+        res.redirect('/employee/login');
+    }
+});
+
+router.post('/receipt', async function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        model.getAllReceipts().then(result => {
+            res.json(result);
+        }, err => {
+            res.json(err.sqlMessage);
+        })
+    } else {
+        res.json(false);
+    }
+});
+
+router.post('/payment', async function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        model.getAllPayments().then(result => {
+            res.json(result);
+        }, err => {
+            res.json(err.sqlMessage);
+        })
+    } else {
+        res.json(false);
+    }
+});
+
+router.post('/receipt/insert', async function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        model.insertReceipt(req.body.amount, req.body.cusId, req.session.user.id).then(result => {
+            res.json(result);
+        }, err => {
+            res.json(err.sqlMessage);
+        })
+    } else {
+        res.json(false);
+    }
+});
+
+router.post('/payment/insert', async function(req, res, next) {
+    if (req.session.type == utils.CASHIER) {
+        model.insertPayment(req.body.amount, req.body.goal, req.session.user.id).then(result => {
+            res.json(result);
+        }, err => {
+            res.json(err.sqlMessage);
+        })
+    } else {
+        res.json(false);
+    }
+});
+
 module.exports = router;

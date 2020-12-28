@@ -55,6 +55,7 @@ router.get('/info', function(req, res, next) {
 router.use('/customer', require('./customer'));
 router.use('/employee', require('./employee'));
 router.use('/ship-department', require('./ship-department'));
+router.use('/cashier', require('./cashier'));
 
 router.use('/manager', require('./manager'));
 router.use('/seller', require('./seller'));
