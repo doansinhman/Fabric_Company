@@ -170,6 +170,10 @@ function detailOrder(id) {
 }
 
 function updateRelease(ele) {
+    if (+ele.value > +ele.max)
+        ele.value = ele.max;
+    if (+ele.value < 0)
+        ele.value = 0;
     if (ele.value > 0)
         RELEASE[ele.id.slice(7)] = +ele.value;
     else
